@@ -71,6 +71,7 @@ public class MainController {
 		if (usuario.equals("admin") && password.equals("admin")) {
 			System.out.println("--Bienvenido Admin--");
 			controlador.setUsername(usuario);
+
 			return "/MenuAdmin";
 		}
 
