@@ -36,22 +36,25 @@ public class Ejemplar implements Serializable {
 	@JoinColumn(name = "idmensaje")
 	private List<Mensaje> mensajes;
 
+	@ManyToOne
+	@JoinColumn(name = "idpedido")
+	private Pedido pedido;
+
 	public Ejemplar() {
 
 	}
 
-	public Ejemplar(Long id, String nombre, Planta planta, List<Mensaje> mensajes) {
+	public Ejemplar(Long id, String nombre, Planta planta, List<Mensaje> mensajes, Pedido pedido) {
+		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.planta = planta;
 		this.mensajes = mensajes;
+		this.pedido = pedido;
 	}
 
-	public long getId() {
-		if (this.id == null) {
-			return 0;
-		}
-		return id.longValue();
+	public Long getId() {
+		return id;
 	}
 
 	public void setId(Long id) {
@@ -82,27 +85,18 @@ public class Ejemplar implements Serializable {
 		this.mensajes = mensajes;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, mensajes, nombre, planta);
+	public Pedido getPedido() {
+		return pedido;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Ejemplar other = (Ejemplar) obj;
-		return id == other.id && Objects.equals(mensajes, other.mensajes) && Objects.equals(nombre, other.nombre)
-				&& Objects.equals(planta, other.planta);
+	public void setPedido(Pedido pedido) {
+		this.pedido = pedido;
 	}
 
 	@Override
 	public String toString() {
-		return "Ejemplar [id=" + id + ", nombre=" + nombre + ", planta=" + planta + ", mensajes=" + mensajes + "]";
+		return "Ejemplar [id=" + id + ", nombre=" + nombre + ", planta=" + planta + ", mensajes=" + mensajes
+				+ ", pedido=" + pedido + "]";
 	}
 
 }
