@@ -45,6 +45,10 @@ public class Cliente implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idcredencial")
 	private Credenciales credencial;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "idpedido")
+	private Pedido pedidos;
 
 	public Cliente() {
 
