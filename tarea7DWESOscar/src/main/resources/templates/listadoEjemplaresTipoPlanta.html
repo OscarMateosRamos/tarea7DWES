@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./CSS/estiloslistadoEjemplaresTipoPlanta.css">
+    <title>Listado de Ejemplares por Tipo de Planta</title>
+</head>
+<body>
+    
+    <header>
+        <h1>Listado de Ejemplares por Tipo de Planta</h1>
+    </header>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Planta</th>
+    
+                 
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ejemplar : ${ejemplares}">
+                    <td th:text="${ejemplar.id}"></td>            
+                    <td th:text="${ejemplar.nombre}"></td>
+                    <td th:text="${ejemplar.planta.codigo}"></td>                                    
+                </tr>
+            </tbody>
+        </table>
+               
+                 
+        <div class="boton-container">
+            <a href="/GestiondePlantas" class="boton">Volver a Gestion de Ejemplares</a>
+        </div>
+    </div>
+</body>
+</html>
