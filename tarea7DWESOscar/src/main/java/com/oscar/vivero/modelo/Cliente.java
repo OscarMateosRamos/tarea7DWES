@@ -45,7 +45,7 @@ public class Cliente implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idcredencial")
 	private Credenciales credencial;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idpedido")
 	private Pedido pedidos;
@@ -55,7 +55,7 @@ public class Cliente implements Serializable {
 	}
 
 	public Cliente(Long id, String nombre, Date fechanac, String nif, String direccion, String email, String telefono,
-			Credenciales credencial) {
+			Credenciales credencial, Pedido pedidos) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
@@ -65,6 +65,7 @@ public class Cliente implements Serializable {
 		this.email = email;
 		this.telefono = telefono;
 		this.credencial = credencial;
+		this.pedidos = pedidos;
 	}
 
 	public Long getId() {
@@ -131,30 +132,19 @@ public class Cliente implements Serializable {
 		this.credencial = credencial;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(credencial, direccion, email, fechanac, id, nif, nombre, telefono);
+	public Pedido getPedidos() {
+		return pedidos;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Cliente other = (Cliente) obj;
-		return Objects.equals(credencial, other.credencial) && Objects.equals(direccion, other.direccion)
-				&& Objects.equals(email, other.email) && Objects.equals(fechanac, other.fechanac)
-				&& Objects.equals(id, other.id) && Objects.equals(nif, other.nif)
-				&& Objects.equals(nombre, other.nombre) && Objects.equals(telefono, other.telefono);
+	public void setPedidos(Pedido pedidos) {
+		this.pedidos = pedidos;
 	}
 
 	@Override
 	public String toString() {
 		return "Cliente [id=" + id + ", nombre=" + nombre + ", fechanac=" + fechanac + ", nif=" + nif + ", direccion="
-				+ direccion + ", email=" + email + ", telefono=" + telefono + ", credencial=" + credencial + "]";
+				+ direccion + ", email=" + email + ", telefono=" + telefono + ", credencial=" + credencial
+				+ ", pedidos=" + pedidos + "]";
 	}
 
 }
