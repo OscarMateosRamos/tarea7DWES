@@ -51,7 +51,7 @@ public class ServiciosCliente {
 
 	}
 
-	public void insertarPlanta(Cliente c) {
+	public void insertarCliente(Cliente c) {
 		clienterepo.saveAndFlush(c);
 	}
 
