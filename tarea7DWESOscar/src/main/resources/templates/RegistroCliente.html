@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./Estilos/estilosCreacionPlantas.css" />
+    <link rel="stylesheet" th:href="./CSS/estilosCreacionPlantas.css" />
     <title>Registrar Cliente</title>
   </head>
   <body>
@@ -14,23 +14,23 @@
     <div class="container">
       <form class="formulario" th:action="@{/CamposCliente}" th:object="${cliente}" method="post">
         <label for="nombre">Nombre</label>
-        <input type="text" id="" name="nombre" required />
+        <input type="text" id="" name="nombre" required th:field="*{nombre}"  />
 
         <label for="fechanac">Fecha de Nacimiento:</label>
 
-        <input type="date" id="fechanac" name="fechanac" required />
+        <input type="date" id="fechanac" name="fechanac" required th:field="*{fechanac}"  />
         <label for="nif">NIF:</label>
-        <input type="text" id="nif" name="nif" required />
+        <input type="text" id="nif" name="nif" required th:field="*{nif}"  />
 
         <label for="direccion">Direccion:</label>
-        <input type="text" id="direccion" name="direccion" required />
+        <input type="text" id="direccion" name="direccion" required th:field="*{direccion}"  />
         
         <label for="email">Email:</label>
-        <input type="text" id="emaiñ" name="email" required />
+        <input type="text" id="emaiñ" name="email" required  th:field="*{email}" />
 
         
-        <label for="telefono">Email:</label>
-        <input type="text" id="telefono" name="telefono" required />
+        <label for="telefono">Telefono:</label>
+        <input type="text" id="telefono" name="telefono" required th:field="*{telefono}" />
 
         <button type="submit" class="boton">Registrar Cliente</button>
       </form>

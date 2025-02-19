@@ -47,7 +47,7 @@ public class ClienteController {
 		return "/RegistroCliente";
 	}
 
-	@GetMapping("/RegistroCliente")
+	@GetMapping("/ClienteRegistro")
 	public String mostrarRegistroCliente(Model model) {
 		model.addAttribute("cliente", new Cliente());
 		return "RegistroCliente";
