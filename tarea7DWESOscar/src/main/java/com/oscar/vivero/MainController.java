@@ -1,3 +1,4 @@
+
 package com.oscar.vivero;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.oscar.vivero.modelo.Credenciales;
 import com.oscar.vivero.servicios.Controlador;
 import com.oscar.vivero.servicios.ServiciosCredenciales;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MainController {
@@ -44,7 +47,7 @@ public class MainController {
 	}
 
 	@PostMapping("/Sesion")
-	public String logInSubmit(@ModelAttribute Credenciales formularioLogIn, Model model) {
+	public String logInSubmit(@ModelAttribute Credenciales formularioLogIn, Model model, HttpSession session) {
 
 		String usuario = formularioLogIn.getUsuario();
 		String password = formularioLogIn.getPassword();
@@ -68,20 +71,22 @@ public class MainController {
 			return "formularioLogIn";
 		}
 
-		if (usuario.equals("admin") && password.equals("admin")) {
+		String rol = c.getRol();
+
+		session.setAttribute("usuario", usuario);
+		session.setAttribute("rol", rol);
+
+		if ("admin".equals(rol)) {
 			System.out.println("--Bienvenido Admin--");
 			controlador.setUsername(usuario);
-
-			return "/MenuAdmin";
-		}
-
-		if (usuario.equals(usuario) && password.equals(password)) {
-			System.out.println("--Bienvenido--" + usuario);
+			return "MenuAdmin";
+		} else if ("personal".equals(rol)) {
+			System.out.println("--Bienvenido Personal--");
 			controlador.setUsername(usuario);
-			return "/MenuPersonal";
+			return "MenuPersonal";
 		}
-		return "MenuInvitado";
 
+		return "formularioLogIn";
 	}
 
 }

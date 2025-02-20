@@ -86,4 +86,18 @@ public class ServiciosCredenciales {
 		return credenciales;
 	}
 
+	public void actualizarRol(String usuario, String rol) {
+
+		Credenciales c = credencialrepo.findByUsuario(usuario);
+
+		if (c != null) {
+
+			c.setRol(rol);
+
+			credencialrepo.save(c);
+		} else {
+
+			System.out.println("Usuario no encontrado.");
+		}
+	}
 }

@@ -11,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-
 @Entity
 @Table(name = "credenciales")
 public class Credenciales implements Serializable {
@@ -28,17 +27,22 @@ public class Credenciales implements Serializable {
 	@Column(name = "password")
 	private String password;
 
+	@Column(name = "rol")
+	private String rol;
+
 	public Credenciales() {
 
 	}
 
-	public Credenciales(Long id, String usuario, String password) {
+	public Credenciales(Long id, String usuario, String password, String rol) {
+		super();
 		this.id = id;
 		this.usuario = usuario;
 		this.password = password;
+		this.rol = rol;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -62,13 +66,17 @@ public class Credenciales implements Serializable {
 		this.password = password;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String getRol() {
+		return rol;
+	}
+
+	public void setRol(String rol) {
+		this.rol = rol;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, password, usuario);
+		return Objects.hash(id, password, rol, usuario);
 	}
 
 	@Override
@@ -80,12 +88,13 @@ public class Credenciales implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Credenciales other = (Credenciales) obj;
-		return id == other.id && Objects.equals(password, other.password) && Objects.equals(usuario, other.usuario);
+		return Objects.equals(id, other.id) && Objects.equals(password, other.password)
+				&& Objects.equals(rol, other.rol) && Objects.equals(usuario, other.usuario);
 	}
 
 	@Override
 	public String toString() {
-		return "Credenciales [id=" + id + ", usuario=" + usuario + ", password=" + password + "]";
+		return "Credenciales [id=" + id + ", usuario=" + usuario + ", password=" + password + ", rol=" + rol + "]";
 	}
 
 }

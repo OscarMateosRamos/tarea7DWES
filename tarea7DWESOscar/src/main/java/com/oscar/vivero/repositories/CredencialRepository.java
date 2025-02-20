@@ -9,7 +9,7 @@ import com.oscar.vivero.modelo.Credenciales;
 @Repository
 public interface CredencialRepository extends JpaRepository<Credenciales, Long> {
 
-	String findByUsuario(String usuario);
+	Credenciales findByUsuario(String usuario);
 
 
 

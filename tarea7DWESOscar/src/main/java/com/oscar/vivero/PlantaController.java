@@ -60,7 +60,7 @@ public class PlantaController {
 
 		if (existePlanta == null) {
 			model.addAttribute("error", "Planta no encontrada.");
-			return "ModificarPlantas";
+			return "ModificarPlanta";
 		}
 
 		existePlanta.setCodigo(ModificarPlanta.getCodigo());
@@ -70,7 +70,7 @@ public class PlantaController {
 		boolean credValidas = servPlanta.validarPlanta(existePlanta);
 		if (!credValidas) {
 			model.addAttribute("error", "Campos de la Planta inválidos.");
-			return "ModificarPlantas";
+			return "ModificarPlanta";
 		}
 
 		servPlanta.modificarPlanta(existePlanta);
