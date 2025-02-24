@@ -80,12 +80,12 @@ public class MainController {
 			System.out.println("--Bienvenido Admin--");
 			controlador.setUsername(usuario);
 			return "MenuAdmin";
-		} else if ("personal".equals(rol)) {
+		} else if ("personal".equals(rol)) {  
 			System.out.println("--Bienvenido Personal--");
 			controlador.setUsername(usuario);
 			return "MenuPersonal";
 		}
-
+		
 		return "formularioLogIn";
 	}
 
