@@ -38,7 +38,7 @@ public class ServiciosMensaje {
 		}
 	}
 
-	public List<Mensaje> verTodosMensajes() {
+	public List<Mensaje> verTodosMensajesEjemplar() {
 		List<Mensaje> mensajes = mensajerepo.findAll();
 
 		for (Mensaje m : mensajes) {
@@ -48,6 +48,23 @@ public class ServiciosMensaje {
 		return mensajes;
 
 	}
+	
+	public List<Mensaje> verTodosMensajes() {
+	    List<Mensaje> mensajes = mensajerepo.findAll(); 
+
+	    for (Mensaje mensaje : mensajes) {
+	        if (mensaje.getEjemplar() == null) {
+	            System.out.println("Advertencia: mensaje con ID " + mensaje.getId() + " no tiene un ejemplar asociado.");
+	        } else {
+	            System.out.println("Mensaje con ejemplar: " + mensaje.getEjemplar().getNombre());
+	        }
+	    }
+	    
+	    return mensajes;
+	}
+
+
+	
 
 	public List<Mensaje> listamensajesPorIdEjemplar(Long id) {
 		List<Mensaje> mensajes = mensajerepo.mensajesPorIdEjemplar(id);
