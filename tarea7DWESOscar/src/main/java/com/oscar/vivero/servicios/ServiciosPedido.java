@@ -8,12 +8,11 @@ import com.oscar.vivero.repositories.PedidoRepository;
 
 @Service
 public class ServiciosPedido {
-	
+
 	@Autowired
 	PedidoRepository pedidorepo;
-	
+
 	public void insertarPedido(Pedido p) {
 		pedidorepo.save(p);
 	}
 }
-
