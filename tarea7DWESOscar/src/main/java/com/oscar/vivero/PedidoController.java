@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.oscar.vivero.modelo.Cliente;
 import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.Pedido;
 import com.oscar.vivero.servicios.ServiciosPedido;
