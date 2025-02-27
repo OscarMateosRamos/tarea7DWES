@@ -61,14 +61,9 @@ public class EjemplarController {
 			Mensaje mensaje = new Mensaje();
 			mensaje.setMensaje("Ejemplar: " + ej.getNombre() + " creado con éxito");
 
-			Mensaje m = new Mensaje();
-			m.setMensaje("Ejemplar: " + ej.getNombre() + " creado con éxito");
-
 			if (ej.getMensajes() == null) {
 				ej.setMensajes(new ArrayList<>());
 			}
-
-			servMensaje.insertar(m);
 
 			servEjemplar.insertarEjemplar(ej);
 
