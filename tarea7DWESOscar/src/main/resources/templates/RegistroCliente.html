@@ -31,6 +31,12 @@
         
         <label for="telefono">Telefono:</label>
         <input type="text" id="telefono" name="telefono" required th:field="*{telefono}" />
+        
+         <label for="usuario">Usuario:</label>
+          <input type="text" id="usuario" name="usuario" th:field="*{credencial.usuario}" required />
+          
+          <label for="password" >Password:</label>
+          <input type="text" id="password" name="password" th:field="*{credencial.password}" required />
 
         <button type="submit" class="boton">Registrar Cliente</button>
       </form>

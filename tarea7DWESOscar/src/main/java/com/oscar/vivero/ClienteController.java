@@ -10,12 +10,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.oscar.vivero.modelo.Cliente;
+import com.oscar.vivero.modelo.Credenciales;
 import com.oscar.vivero.servicios.ServiciosCliente;
-@Controller	
+import com.oscar.vivero.servicios.ServiciosCredenciales;
+
+@Controller
 public class ClienteController {
-	
+
 	@Autowired
 	ServiciosCliente servcliente;
+
+	@Autowired
+	ServiciosCredenciales servCredenciales;
 
 	@PostMapping("/CamposCliente")
 	public String RegistrarCliente(@ModelAttribute Cliente RegistroCliente, Model model) {
@@ -28,6 +34,8 @@ public class ClienteController {
 		String direccion = RegistroCliente.getDireccion();
 		String email = RegistroCliente.getEmail();
 		String telefono = RegistroCliente.getTelefono();
+		String usuario = RegistroCliente.getCredencial().getUsuario();
+		String password = RegistroCliente.getCredencial().getPassword();
 
 		c.setNombre(nombre);
 		c.setFechanac(fecahanac);
@@ -35,8 +43,14 @@ public class ClienteController {
 		c.setDireccion(direccion);
 		c.setEmail(email);
 		c.setTelefono(telefono);
-		
-		
+
+		Credenciales cr = new Credenciales();
+
+		cr.setUsuario(usuario);
+		cr.setPassword(password);
+
+		servCredenciales.insertarCredencial(cr);
+		c.setCredencial(cr);
 
 		boolean camposValidos = servcliente.validarCliente(nombre, email, telefono, direccion, nif);
 
@@ -46,7 +60,7 @@ public class ClienteController {
 		}
 
 		servcliente.insertarCliente(c);
-		
+
 		return "/RegistroCliente";
 	}
 

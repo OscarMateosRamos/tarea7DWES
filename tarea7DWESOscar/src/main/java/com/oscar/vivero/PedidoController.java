@@ -39,6 +39,7 @@ public class PedidoController {
 		return "/RealizarPedido";
 	}
 
+	
 	@GetMapping("/PedidoRealizado")
 	public String mostrarRegistroCliente(Model model) {
 		model.addAttribute("pedido", new Pedido());
