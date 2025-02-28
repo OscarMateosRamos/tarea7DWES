@@ -1,6 +1,7 @@
 package com.oscar.vivero.servicios;
 
 import java.util.List;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,23 +17,28 @@ public class ServiciosCliente {
 	@Autowired
 	ClienteRepository clienterepo;
 
-	public boolean validarCliente(String nombre, String email, String nif, String telefono, String direccion) {
+	public boolean validarCliente(String nombre, String email, String nif, String telefono, String direccion,
+			String usuario, String password) {
 
-		if (nombre.length() > 255) {
+		
+		if (nombre == null || nombre.isEmpty() || nombre.length() > 255) {
 			System.out.println("Nombre inválido");
 			return false;
 		}
 
-		if (email.length() > 255) {
+	
+		if (email == null || email.isEmpty() || email.length() > 255) {
 			System.out.println("Email inválido");
 			return false;
 		}
 
-		if (direccion.length() > 255) {
-			System.out.println("Direccion inválida");
+		
+		if (direccion == null || direccion.isEmpty() || direccion.length() > 255) {
+			System.out.println("Dirección inválida");
 			return false;
 		}
 
+		
 		String patronEmail = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 		Pattern patternEmail = Pattern.compile(patronEmail);
 		Matcher matcherEmail = patternEmail.matcher(email);
@@ -41,12 +47,23 @@ public class ServiciosCliente {
 			return false;
 		}
 
-		String patronNIF = "^\\d{8}[A-Z]$";
+		
+		if (nif == null || nif.isEmpty() || nif.length() != 9) {
+			System.out.println("NIF inválido: " + nif);
+			return false;
+		}
 
+		String patronNIF = "^\\d{8}[A-Z]$";
 		Pattern patternNIF = Pattern.compile(patronNIF);
 		Matcher matcherNIF = patternNIF.matcher(nif);
 		if (!matcherNIF.matches()) {
 			System.out.println("Formato de NIF inválido: " + nif);
+			return false;
+		}
+
+		
+		if (telefono == null || telefono.isEmpty() || telefono.length() != 9) {
+			System.out.println("Teléfono inválido: " + telefono);
 			return false;
 		}
 
@@ -58,14 +75,31 @@ public class ServiciosCliente {
 			return false;
 		}
 
-		List<Cliente> clientes = clienterepo.findAll();
-		for (Cliente c : clientes) {
-			if (c.getEmail().equals(email)) {
-				System.out.println("El email ya existe: " + email);
-				return false;
-			}
+		
+		if (usuario == null || usuario.isEmpty() || usuario.contains(" ")) {
+			System.out.println("El usuario no puede ser vacío ni contener espacios");
+			return false;
 		}
 
+		
+		if (password == null || password.isEmpty() || password.contains(" ")) {
+			System.out.println("La contraseña no puede ser vacía ni contener espacios");
+			return false;
+		}
+
+		
+		if (clienterepo.existsByEmail(email)) {
+			System.out.println("El email ya existe: " + email);
+			return false;
+		}
+
+		
+		if (clienterepo.existsByUsuario(usuario)) {
+			System.out.println("El usuario ya existe: " + usuario);
+			return false;
+		}
+
+		
 		return true;
 	}
 

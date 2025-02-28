@@ -84,6 +84,10 @@ public class MainController {
 			System.out.println("--Bienvenido Personal--");
 			controlador.setUsername(usuario);
 			return "MenuPersonal";
+		}else if ("cliente".equals(rol)) {
+			System.out.println("--Bienvenido Cliente--");
+			controlador.setUsername(usuario);
+			return "/RealizarPedido";
 		}
 
 		return "formularioLogIn";
@@ -91,9 +95,7 @@ public class MainController {
 
 	@GetMapping("/cerrarSesion")
 	public String cerrarSesion(HttpSession session) {
-
-		session.invalidate();
-
-		return "redirect:/formularioLogIn";
+	    session.invalidate();  
+	    return "redirect:/Sesion";  
 	}
 }

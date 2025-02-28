@@ -26,46 +26,49 @@ public class ClienteController {
 	@PostMapping("/CamposCliente")
 	public String RegistrarCliente(@ModelAttribute Cliente RegistroCliente, Model model) {
 
-		Cliente c = new Cliente();
-
 		String nombre = RegistroCliente.getNombre();
-		Date fecahanac = RegistroCliente.getFechanac();
+		Date fechanac = RegistroCliente.getFechanac();
 		String nif = RegistroCliente.getNif();
 		String direccion = RegistroCliente.getDireccion();
 		String email = RegistroCliente.getEmail();
 		String telefono = RegistroCliente.getTelefono();
+
 		String usuario = RegistroCliente.getCredencial().getUsuario();
 		String password = RegistroCliente.getCredencial().getPassword();
 
+		Cliente c = new Cliente();
 		c.setNombre(nombre);
-		c.setFechanac(fecahanac);
+		c.setFechanac(fechanac);
 		c.setNif(nif);
 		c.setDireccion(direccion);
 		c.setEmail(email);
 		c.setTelefono(telefono);
 
 		Credenciales cr = new Credenciales();
-
 		cr.setUsuario(usuario);
 		cr.setPassword(password);
+		cr.setRol("cliente");
 
 		servCredenciales.insertarCredencial(cr);
 		c.setCredencial(cr);
 
-		boolean camposValidos = servcliente.validarCliente(nombre, email, telefono, direccion, nif);
+		boolean camposValidos = servcliente.validarCliente(nombre, email, nif, telefono, direccion, usuario, password);
 
 		if (!camposValidos) {
-			model.addAttribute("error", " campos del Cliente Invalidos.");
+			model.addAttribute("mensajeError", "Campos del Cliente inválidos.");
 			return "RegistroCliente";
 		}
 
 		servcliente.insertarCliente(c);
 
-		return "/RegistroCliente";
+		model.addAttribute("mensajeExito", "Cliente añadido correctamente.");
+		model.addAttribute("cliente", new Cliente());
+		return "RegistroCliente";
 	}
 
 	@GetMapping("/ClienteRegistro")
-	public String mostrarRegistroCliente(Model model) {
+	public String mostrarFormularioRegistroCliente(Model model) {
+
 		model.addAttribute("cliente", new Cliente());
 		return "RegistroCliente";
 	}
