@@ -83,3 +83,18 @@ input[type="text"] {
     background-color: #444;
     transform: scale(1.05);
 }
+
+.mensaje-exito {
+    color: green;
+    background-color: #d4edda;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.mensaje-error {
+    color: red;
+    background-color: #f8d7da;
+    padding: 10px;
+    border-radius: 5px;
+}
+

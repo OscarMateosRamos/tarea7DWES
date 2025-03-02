@@ -1,4 +1,3 @@
-
 package com.oscar.vivero;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MainController {
+
 	@Autowired
 	ServiciosCredenciales servCredenciales;
 
@@ -24,9 +24,7 @@ public class MainController {
 
 	@GetMapping({ "/", "MenuInvitado" })
 	public String MenuInvitado() {
-
 		return "MenuInvitado";
-
 	}
 
 	@GetMapping("/MenuPersonal")
@@ -43,7 +41,6 @@ public class MainController {
 	public String logIn(Model model) {
 		model.addAttribute("credenciales", new Credenciales());
 		return "formularioLogIn";
-
 	}
 
 	@PostMapping("/Sesion")
@@ -64,38 +61,38 @@ public class MainController {
 		}
 
 		Credenciales c = servCredenciales.buscarCredencialPorUsuario(usuario);
-		boolean credValidas = servCredenciales.validarUsuarioPassword(c);
 
-		if (!credValidas) {
-			model.addAttribute("error", "Credenciales inválidas.");
-			return "formularioLogIn";
-		}
+		session.setAttribute("credenciales", c);
+		session.setAttribute("usuario", usuario);
 
 		String rol = c.getRol();
-
-		session.setAttribute("usuario", usuario);
-		session.setAttribute("rol", rol);
 
 		if ("admin".equals(rol)) {
 			System.out.println("--Bienvenido Admin--");
 			controlador.setUsername(usuario);
 			return "MenuAdmin";
-		} else if ("personal".equals(rol)) {
+		}
+
+		if ("personal".equals(rol)) {
 			System.out.println("--Bienvenido Personal--");
 			controlador.setUsername(usuario);
 			return "MenuPersonal";
-		}else if ("cliente".equals(rol)) {
+		}
+
+		if ("cliente".equals(rol)) {
 			System.out.println("--Bienvenido Cliente--");
 			controlador.setUsername(usuario);
 			return "/RealizarPedido";
 		}
 
+		System.out.println("--Rol no reconocido--");
 		return "formularioLogIn";
+
 	}
 
 	@GetMapping("/cerrarSesion")
 	public String cerrarSesion(HttpSession session) {
-	    session.invalidate();  
-	    return "redirect:/Sesion";  
+		session.invalidate();
+		return "/Sesion";
 	}
 }

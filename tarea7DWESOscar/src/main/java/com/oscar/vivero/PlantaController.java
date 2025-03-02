@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.servicios.ServiciosPlanta;
@@ -55,27 +56,29 @@ public class PlantaController {
 	}
 
 	@PostMapping("/CamposModificarPlanta/{id}")
-	public String ModificarPlanta(@PathVariable Long id, @ModelAttribute Planta ModificarPlanta, Model model) {
-		Planta existePlanta = servPlanta.buscarPlantaPorId(id);
+	public String ModificarPlanta(@PathVariable Long id, @ModelAttribute Planta modificarPlanta, RedirectAttributes redirectAttributes) {
+	    Planta existePlanta = servPlanta.buscarPlantaPorId(id);
 
-		if (existePlanta == null) {
-			model.addAttribute("error", "Planta no encontrada.");
-			return "ModificarPlanta";
-		}
+	    if (existePlanta == null) {
+	        redirectAttributes.addFlashAttribute("error", "Planta no encontrada.");
+	        return "redirect:/ModificarPlantas";
+	    }
 
-		existePlanta.setCodigo(ModificarPlanta.getCodigo());
-		existePlanta.setNombrecomun(ModificarPlanta.getNombrecomun());
-		existePlanta.setNombrecientifico(ModificarPlanta.getNombrecientifico());
+	    
+	    existePlanta.setNombrecomun(modificarPlanta.getNombrecomun());
+	    
+	    existePlanta.setNombrecientifico(modificarPlanta.getNombrecientifico());
 
-		boolean credValidas = servPlanta.validarPlanta(existePlanta);
-		if (!credValidas) {
-			model.addAttribute("error", "Campos de la Planta inválidos.");
-			return "ModificarPlanta";
-		}
+	    boolean credValidas = servPlanta.validarPlantaSinCodigo(existePlanta);
+	    if (!credValidas) {
+	        redirectAttributes.addFlashAttribute("error", "Campos de la Planta inválidos.");
+	        return "redirect:/ModificarPlantas";
+	    }
 
-		servPlanta.modificarPlanta(existePlanta);
-		model.addAttribute(" exito", "Planta modificada correctamente.");
-		return "redirect:/plantas";
+	    servPlanta.modificarPlanta(existePlanta);
+	    redirectAttributes.addFlashAttribute("exito", "Planta modificada correctamente.");
+
+	    return "redirect:/plantas";
 	}
 
 	@GetMapping("/CrearPlantas")
@@ -88,7 +91,7 @@ public class PlantaController {
 	public String mostrarCrearModificarPlantasFormulario(Model model) {
 		List<Planta> p = servPlanta.vertodasPlantas();
 		model.addAttribute("plantas", p);
-		return "ModificarPlanta";
+		return "/ModificarPlanta";
 	}
 
 	@GetMapping("/formularioModificarPlanta/{id}")

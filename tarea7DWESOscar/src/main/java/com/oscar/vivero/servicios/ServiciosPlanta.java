@@ -38,7 +38,19 @@ public class ServiciosPlanta {
 		}
 
 		return true;
+		
 	}
+	
+	public boolean validarPlantaSinCodigo(Planta planta) {
+	    if (planta.getNombrecomun() == null || planta.getNombrecomun().isEmpty()) {
+	        return false;
+	    }
+	    if (planta.getNombrecientifico() == null || planta.getNombrecientifico().isEmpty()) {
+	        return false;
+	    }
+	    return true;
+	}
+
 
 	public void insertarPlanta(Planta pl) {
 		plantarepo.saveAndFlush(pl);

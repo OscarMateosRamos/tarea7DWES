@@ -1,33 +1,47 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="CSS/estilosCreacionPlantas.css">
-    <title>Crear Ejemplar</title>
+    <link rel="stylesheet" th:href="@{/CSS/estilosCreacionPersona.css}" />
+    <title>Crear Persona</title>
 </head>
 <body>
+    <header>
+        <h1> Creación de Persona</h1>
+    </header>
 
-<header>
-    <h1>Creación de Ejemplar</h1>
-</header>
-
-<div class="container">
    
-    <form class="formulario" th:action="@{/CamposEjemplar}" th:object="${ejemplar}" method="post">
-        <label for="codigo">Código de Planta:</label>
-        <input type="text" id="codigo" name="codigo" th:field="*{planta.codigo}" required />
-        <br><br>
-
-        <button type="submit" class="boton">Crear Ejemplar</button>
-    </form>
-
-    <br>
-   
-    <div class="contenedor-boton">
-        <a href="/GestionEjemplaresMenuAdmin" class="boton">Volver a Gestión de Ejemplares</a>
+    <div th:if="${exito}" style="color: green; background-color: #d4edda; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; font-weight: bold;">
+        <p th:text="${exito}"></p>
     </div>
-</div>
 
+    
+    <div th:if="${error}" style="color: red; background-color: #f8d7da; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; font-weight: bold;">
+        <p th:text="${error}"></p>
+    </div>
+
+    <div class="container">
+        <form class="formulario" th:action="@{/CamposPersona}" th:object="${persona}" method="post">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" th:field="*{nombre}" required />
+
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" th:field="*{email}" required />
+
+            <label for="usuario">Usuario:</label>
+            <input type="text" id="usuario" name="usuario" th:field="*{credencial.usuario}" required />
+          
+            <label for="password">Password:</label>
+            <input type="text" id="password" name="password" th:field="*{credencial.password}" required />
+  
+            <button type="submit" class="boton">Crear Persona</button>
+        </form>
+
+        <br>
+        <div class="contenedor-boton">
+            <a href="/GestiondePersonas" class="boton"> Volver a Gestion de Personas</a>
+        </div>
+    </div>
 </body>
 </html>
