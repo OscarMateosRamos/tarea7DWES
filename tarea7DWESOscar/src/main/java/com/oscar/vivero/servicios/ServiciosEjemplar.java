@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.Mensaje;
@@ -15,15 +17,20 @@ import com.oscar.vivero.repositories.EjemplarRepository;
 
 @Service
 public class ServiciosEjemplar {
+
 	@Autowired
 	EjemplarRepository ejemplarrepo;
+
 	@Autowired
 	ServiciosPersona servPersona;
+
 	@Autowired
 	ServiciosMensaje servMensaje;
+
 	@Autowired
 	Controlador controlador;
 
+	@Transactional
 	public void insertarEjemplar(Ejemplar ej) {
 		ejemplarrepo.saveAndFlush(ej);
 
@@ -45,17 +52,15 @@ public class ServiciosEjemplar {
 				String mensaje = "Añadido nuevo ejemplar " + ej.getNombre() + " por " + controlador.getUsername() + " ("
 						+ fechahora + " ).";
 				m.setEjemplar(ej);
-
 				m.setFechahora(date);
-
 				m.setMensaje(mensaje);
 
 				Optional<Persona> personas = servPersona.buscarPorId(Long.valueOf(1));
 				m.setPersona(personas.get());
+
 				servMensaje.insertar(m);
 			}
 		}
-
 	}
 
 	public List<Ejemplar> listaejemplaresPorTipoPlanta(String codigo) {
@@ -75,38 +80,26 @@ public class ServiciosEjemplar {
 	}
 
 	public boolean existeIdEjemplar(Long id) {
-		List<Ejemplar> ejemplares = ejemplarrepo.findAll();
-
-		for (Ejemplar e : ejemplares) {
-			if (e.getId() == id) {
-				return true;
-			}
-		}
-		return false;
+		return ejemplarrepo.existsById(id);
 	}
 
 	public boolean existeNombreEjemplar(String nombre) {
-		List<Ejemplar> ejemplares = ejemplarrepo.findAll();
-
-		for (Ejemplar e : ejemplares) {
-			if (e.getNombre().equals(nombre)) {
-				return true;
-			}
-		}
-		return false;
+		return ejemplarrepo.existsByNombre(nombre);
 	}
 
 	public List<Ejemplar> vertodosEjemplares() {
-		List<Ejemplar> ejemplares = ejemplarrepo.findAll();
-		return ejemplares;
+		return ejemplarrepo.findAll();
 	}
 
-	// Si el ejemplar existe se devulve si no se devulve NULL
-	public Ejemplar buscarPorId(long id) {
-
+	public Ejemplar buscarPorId(Long id) {
 		Optional<Ejemplar> ejemplarOptional = ejemplarrepo.findById(id);
+		Ejemplar ejemplar = ejemplarOptional.orElse(null);
 
-		return ejemplarOptional.orElse(null);
+		if (ejemplar != null) {
+
+			Hibernate.initialize(ejemplar.getMensajes());
+		}
+
+		return ejemplar;
 	}
-
 }

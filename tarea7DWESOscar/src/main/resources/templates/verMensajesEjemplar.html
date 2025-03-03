@@ -3,39 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="./CSS/estiloslistadoEjemplaresTipoPlanta.css">
-    <title>ver mensajes del ejemplar</title>
+    <link rel="stylesheet" th:href="@{/CSS/estiloslistadoMensajes.css}">
+    <title>Ver Mensajes del Ejemplar</title>
 </head>
 <body>
-    
+
     <header>
         <h1>Ver Mensajes del Ejemplar</h1>
     </header>
 
     <div class="container">
+
+
+        <form th:action="@{/verMensajesEjemplar}" method="get">
+            <div>
+                <label for="ejemplarSeleccionado">Filtrar por Ejemplar:</label>
+                <select id="ejemplarSeleccionado" name="ejemplarId">
+                    <option value="" th:selected="${ejemplarId == null}">Seleccionar Ejemplar</option>
+                    <option th:each="ejemplar : ${ejemplares}" 
+                            th:value="${ejemplar.id}" 
+                            th:text="${ejemplar.nombre}"></option>
+                </select>
+                <button type="submit">Filtrar</button>
+            </div>
+        </form>
+
+
         <table>
             <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Nombre</th>
+                    <th>ID</th>
+                    <th>Fecha y Hora</th>
                     <th>Mensaje</th>
-    
-                 
+                    <th>ID Ejemplar</th>
+                    <th>Nombre Ejemplar</th>
+                    <th>ID Persona</th>
+                    <th>Nombre Persona</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="ejemplar : ${ejemplares}">
-                    <td th:text="${ejemplar.id}"></td>            
-                    <td th:text="${ejemplar.nombre}"></td>
-                    <td th:text="${ejemplar.mensaje}"></td>                                    
+                <tr th:each="mensaje : ${mensajes}">
+                    <td th:text="${mensaje.id}"></td>
+                    <td th:text="${mensaje.fechahora}"></td>
+                    <td th:text="${mensaje.mensaje}"></td>
+                    <td th:text="${mensaje.ejemplar.id}"></td>
+                    <td th:text="${mensaje.ejemplar.nombre}"></td>
+                    <td th:text="${mensaje.persona.id}"></td>
+                    <td th:text="${mensaje.persona.nombre}"></td>
                 </tr>
             </tbody>
         </table>
-               
-                 
-        <div class="boton-container">
-            <a href="/GestiondePlantas" class="boton">Volver a Gestion de Ejemplares</a>
+
+
+        <div class="contenedor-boton">
+            <a href="/GestiondeMensajes" class="boton">Volver a Gestión de Mensajes</a>
         </div>
-    </div>
+
+    </div> 
 </body>
 </html>

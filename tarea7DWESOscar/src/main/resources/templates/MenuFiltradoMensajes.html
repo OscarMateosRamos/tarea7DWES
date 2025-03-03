@@ -3,22 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Menú Invitado</title>
+<title>Menú Filtrado de Mensajes</title>
 <link rel="stylesheet" th:href="@{/CSS/estilosMenuInvitado.css}">
-
 </head>
 <body>
 	<header>
-		<h1>Menú Invitado</h1>
+		<h1>Menú de Filtrado de Mensajes</h1>
 	</header>
 
 	<div class="menu-container">
 		<ul class="menu">
-			<li><a th:href="@{/plantas}">Listar Plantas</a></li>
-
-			<li><a th:href="@{/MostrarSesion}">Iniciar Sesión</a></li>
 			
-			<li><a th:href="@{/ClienteRegistro}">Alta Cliente</a></li>
+			<li><a th:href="@{/filtrarMensajesPorFecha}">Filtrar Mensajes Por Fechas</a></li>
+			
+			
+			<li><a th:href="@{/GestionMensajesMenuAdmin}">Volver a Gestión de Mensajes (ADMIN)</a></li>
 		</ul>
 	</div>
 </body>

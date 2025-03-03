@@ -18,4 +18,6 @@ public interface EjemplarRepository extends JpaRepository<Ejemplar, Long> {
 
 	Optional<Ejemplar> findByNombre(String nombre);
 
+	boolean existsByNombre(String nombre);
+
 }

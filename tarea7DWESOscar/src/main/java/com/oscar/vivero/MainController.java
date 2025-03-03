@@ -36,8 +36,14 @@ public class MainController {
 	public String mostarMenuAdmin() {
 		return "MenuAdmin";
 	}
+	
+	@GetMapping("/MenuFiltradoMensajes")
+	public String mostarMenuFiltarMensajes() {
+		return "MenuFiltradoMensajes";
+	}
 
-	@GetMapping("/Sesion")
+	
+	@GetMapping("/MostrarSesion")
 	public String logIn(Model model) {
 		model.addAttribute("credenciales", new Credenciales());
 		return "formularioLogIn";
@@ -82,7 +88,7 @@ public class MainController {
 		if ("cliente".equals(rol)) {
 			System.out.println("--Bienvenido Cliente--");
 			controlador.setUsername(usuario);
-			return "/RealizarPedido";
+			return "RealizarPedido";
 		}
 
 		System.out.println("--Rol no reconocido--");
@@ -90,9 +96,9 @@ public class MainController {
 
 	}
 
-	@GetMapping("/cerrarSesion")
+	@GetMapping("/CerrarSesion")
 	public String cerrarSesion(HttpSession session) {
 		session.invalidate();
-		return "/Sesion";
+		return "/MostrarSesion";
 	}
 }
