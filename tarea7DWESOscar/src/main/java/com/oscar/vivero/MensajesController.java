@@ -20,6 +20,7 @@ import com.oscar.vivero.servicios.Controlador;
 import com.oscar.vivero.servicios.ServiciosEjemplar;
 import com.oscar.vivero.servicios.ServiciosMensaje;
 import com.oscar.vivero.servicios.ServiciosPersona;
+import com.oscar.vivero.servicios.ServiciosPlanta;
 
 @Controller
 public class MensajesController {
@@ -32,6 +33,9 @@ public class MensajesController {
 
 	@Autowired
 	ServiciosEjemplar servEjemplar;
+
+	@Autowired
+	ServiciosPlanta servPlanta;
 
 	@Autowired
 	Controlador controlador;
@@ -126,4 +130,38 @@ public class MensajesController {
 		}
 	}
 
+	@GetMapping("/filtrarMensajesCodigoPlanta")
+	public String filtrarMensajesPorCodigoPlanta(@RequestParam(value = "tipoPlanta", required = false) String tipoPlanta, Model model) {
+	    try {
+	    
+	        List<String> tiposPlantas = servPlanta.listarTiposDePlanta(); 
+	        model.addAttribute("tiposPlantas", tiposPlantas);
+
+	 
+	        if (tipoPlanta == null || tipoPlanta.isEmpty()) {
+	            model.addAttribute("error", "Por favor, seleccione un tipo de planta.");
+	            return "FiltrarMensajeTipoPlanta";  
+	        }
+
+	       
+	        List<Mensaje> mensajesFiltrados = servMensaje.listamensajesPorCodigoPlanta(tipoPlanta);
+
+	      
+	        if (mensajesFiltrados.isEmpty()) {
+	            model.addAttribute("error", "No se encontraron mensajes para el tipo de planta seleccionado.");
+	        } else {
+	            model.addAttribute("mensajes", mensajesFiltrados);
+	        }
+
+	        return "FiltrarMensajeTipoPlanta";  
+
+	    } catch (Exception e) {
+	       
+	        model.addAttribute("error", "Ocurrió un error al filtrar los mensajes.");
+	        return "FiltrarMensajeTipoPlanta";  
+	}
+
+
+
+}
 }

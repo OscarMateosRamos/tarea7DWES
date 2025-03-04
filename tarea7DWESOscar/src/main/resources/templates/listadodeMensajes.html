@@ -19,8 +19,8 @@
 					<th>ID</th>
 					<th>Fechahora</th>
                     <th>Mensaje</th>
-					<th>ID Ejemplar</th>
-                    <th>ID Persona</th>
+					<th> Ejemplar</th>
+                    <th> Persona</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -28,8 +28,8 @@
 					<td th:text="${mensaje.id}"></td>
 					<td th:text="${mensaje.fechahora}"></td>
                     <td th:text="${mensaje.mensaje}"></td>
-					<td th:text="${mensaje.ejemplar.id}"></td>
-                    <td th:text="${mensaje.persona.id}"></td>
+					<td th:text="${mensaje.ejemplar.nombre}"></td>
+                    <td th:text="${mensaje.persona.email}"></td>
 
 				</tr>
 				</tbody>

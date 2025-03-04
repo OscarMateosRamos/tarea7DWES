@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/CSS/estiloslistadoMensajes.css}">
     <title>Filtrar Mensajes por Fecha</title>
 </head>
 <body>
@@ -22,12 +23,12 @@
             <button type="submit">Filtrar</button>
         </form>
 
-        <!-- Si hay un mensaje de error, se mostrará aquí -->
+     
         <div th:if="${error}">
             <p th:text="${error}" style="color: red;"></p>
         </div>
 
-        <!-- Tabla de resultados -->
+       
         <div th:if="${mensajes != null}">
             <table>
                 <thead>
@@ -35,8 +36,8 @@
                         <th>ID</th>
                         <th>Fecha y Hora</th>
                         <th>Mensaje</th>
-                        <th>ID Ejemplar</th>
-                        <th>ID Persona</th>
+                        <th> Ejemplar</th>
+                        <th> Persona</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,13 +45,17 @@
                         <td th:text="${mensaje.id}"></td>
                         <td th:text="${#dates.format(mensaje.fechahora, 'yyyy-MM-dd HH:mm:ss')}"></td>
                         <td th:text="${mensaje.mensaje}"></td>
-                        <td th:text="${mensaje.ejemplar.id}"></td>
-                        <td th:text="${mensaje.persona.id}"></td>
+                        <td th:text="${mensaje.ejemplar.nombre}"></td>
+                        <td th:text="${mensaje.persona.email}"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        <div class="menu-container">
+			<ul class="menu">
+				<li><a th:href="@{/MenuFiltradoMensajes}"> Salir</a></li>
+			</ul>
+		</div>
     </div>
-
 </body>
 </html>

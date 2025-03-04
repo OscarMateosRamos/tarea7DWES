@@ -1,5 +1,6 @@
 package com.oscar.vivero.servicios;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +39,18 @@ public class ServiciosPlanta {
 		}
 
 		return true;
-		
-	}
-	
-	public boolean validarPlantaSinCodigo(Planta planta) {
-	    if (planta.getNombrecomun() == null || planta.getNombrecomun().isEmpty()) {
-	        return false;
-	    }
-	    if (planta.getNombrecientifico() == null || planta.getNombrecientifico().isEmpty()) {
-	        return false;
-	    }
-	    return true;
+
 	}
 
+	public boolean validarPlantaSinCodigo(Planta planta) {
+		if (planta.getNombrecomun() == null || planta.getNombrecomun().isEmpty()) {
+			return false;
+		}
+		if (planta.getNombrecientifico() == null || planta.getNombrecientifico().isEmpty()) {
+			return false;
+		}
+		return true;
+	}
 
 	public void insertarPlanta(Planta pl) {
 		plantarepo.saveAndFlush(pl);
@@ -103,6 +103,23 @@ public class ServiciosPlanta {
 		}
 
 		return pl;
+	}
+
+	public List<String> listarTiposDePlanta() {
+		try {
+
+			List<String> tiposPlantas = plantarepo.findDistinctTiposDePlanta();
+
+			if (tiposPlantas == null || tiposPlantas.isEmpty()) {
+				return new ArrayList<>();
+			}
+			return tiposPlantas;
+
+		} catch (Exception e) {
+
+			System.err.println("Error al obtener los tipos de planta: " + e.getMessage());
+			return new ArrayList<>();
+		}
 	}
 
 }
