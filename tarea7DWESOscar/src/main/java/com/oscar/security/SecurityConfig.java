@@ -16,12 +16,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/Sesion", "/css/**", "/js/**", "/images/**").permitAll()  
+                .requestMatchers("/MostrarSesion","/Sesion", "/css/**", "/js/**", "/images/**").permitAll()  
                 .anyRequest().authenticated()  
             )
             .formLogin(login -> login
-                .loginPage("/MostrarSesion") 
-                .loginProcessingUrl("/Sesion")  
+                .loginPage("/formularioLogIn")
                 .permitAll()  
             )
             .logout(logout -> logout

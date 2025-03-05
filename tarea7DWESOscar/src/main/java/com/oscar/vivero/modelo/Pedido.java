@@ -3,17 +3,19 @@ package com.oscar.vivero.modelo;
 import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -37,16 +39,23 @@ public class Pedido {
 	@JoinColumn(name = "idcliente")
 	private List<Cliente> clientes = new LinkedList<Cliente>();
 
+	@ElementCollection
+	@MapKeyColumn(name = "codigo_planta")
+	@Column(name = "cantidad")
+	private Map<String, Integer> cantidades;
+
 	public Pedido() {
 
 	}
 
-	public Pedido(Long id, Date fecha, List<Ejemplar> ejemplares, List<Cliente> clientes) {
+	public Pedido(Long id, Date fecha, List<Ejemplar> ejemplares, List<Cliente> clientes,
+			Map<String, Integer> cantidades) {
 		super();
 		this.id = id;
 		this.fecha = fecha;
 		this.ejemplares = ejemplares;
 		this.clientes = clientes;
+		this.cantidades = cantidades;
 	}
 
 	public Long getId() {
@@ -81,9 +90,17 @@ public class Pedido {
 		this.clientes = clientes;
 	}
 
+	public Map<String, Integer> getCantidades() {
+		return cantidades;
+	}
+
+	public void setCantidades(Map<String, Integer> cantidades) {
+		this.cantidades = cantidades;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(clientes, ejemplares, fecha, id);
+		return Objects.hash(cantidades, clientes, ejemplares, fecha, id);
 	}
 
 	@Override
@@ -95,13 +112,15 @@ public class Pedido {
 		if (getClass() != obj.getClass())
 			return false;
 		Pedido other = (Pedido) obj;
-		return Objects.equals(clientes, other.clientes) && Objects.equals(ejemplares, other.ejemplares)
-				&& Objects.equals(fecha, other.fecha) && Objects.equals(id, other.id);
+		return Objects.equals(cantidades, other.cantidades) && Objects.equals(clientes, other.clientes)
+				&& Objects.equals(ejemplares, other.ejemplares) && Objects.equals(fecha, other.fecha)
+				&& Objects.equals(id, other.id);
 	}
 
 	@Override
 	public String toString() {
-		return "Pedido [id=" + id + ", fecha=" + fecha + ", ejemplares=" + ejemplares + ", clientes=" + clientes + "]";
+		return "Pedido [id=" + id + ", fecha=" + fecha + ", ejemplares=" + ejemplares + ", clientes=" + clientes
+				+ ", cantidades=" + cantidades + "]";
 	}
 
 }

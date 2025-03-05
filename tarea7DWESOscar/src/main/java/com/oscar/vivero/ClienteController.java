@@ -49,20 +49,29 @@ public class ClienteController {
 		cr.setPassword(password);
 		cr.setRol("cliente");
 
-		servCredenciales.insertarCredencial(cr);
 		c.setCredencial(cr);
 
 		boolean camposValidos = servcliente.validarCliente(nombre, email, nif, telefono, direccion, usuario, password);
 
 		if (!camposValidos) {
+
 			model.addAttribute("mensajeError", "Campos del Cliente inválidos.");
+			model.addAttribute("cliente", RegistroCliente);
 			return "RegistroCliente";
 		}
 
-		servcliente.insertarCliente(c);
+		try {
+			servcliente.insertarCliente(c);
+			servCredenciales.insertarCredencial(cr);
 
-		model.addAttribute("mensajeExito", "Cliente añadido correctamente.");
-		model.addAttribute("cliente", new Cliente());
+			model.addAttribute("mensajeExito", "Cliente añadido correctamente.");
+			model.addAttribute("cliente", new Cliente());
+		} catch (Exception e) {
+
+			model.addAttribute("mensajeError", "Hubo un error al registrar el cliente. Por favor, intente nuevamente.");
+			model.addAttribute("cliente", RegistroCliente);
+		}
+
 		return "RegistroCliente";
 	}
 

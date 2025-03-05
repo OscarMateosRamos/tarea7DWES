@@ -1,55 +1,73 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" th:href="./CSS/estiloslistadoPlantas.css" />
-    <title>Realizar Pedido</title>
-  </head>
-  <body>
-    <header>
-      <h1>Realiza tu Pedido</h1>
-    </header>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css"
+	th:href="@{/CSS/estilosRealizarPedido.css}">
+<title>Realizar Pedido</title>
+</head>
+<body>
 
-    <div class="container">
-      <form action="#" method="POST" th:action="@{/realizarPedido}" th:object="${pedido}">
-        <table>
-          <thead>
-            <tr>
-              <th>Planta</th>
-              <th>STOCK DISPONIBLE</th>
-              <th>Seleccione Cantidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="planta : ${plantas}">
-              <td th:text="${planta.codigo}"></td>
-              <td th:text="${planta.ejemplares.size()}"></td>
+	<header>
+		<h1>Realizar Pedido</h1>
+	</header>
 
-              <td>
-                <div th:if="${planta.ejemplares.size() > 0}">
-                  <select th:field="*{cantidades[${planta.codigo}]}">
-                    <option th:each="i : ${#numbers.sequence(1, planta.ejemplares.size())}" th:value="${i}" th:text="${i}"></option>
-                  </select>
-                </div>
-                <div th:unless="${planta.ejemplares.size() > 0}">
-                  No hay cantidad disponible
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+	<div class="container">
 
-        
-        <div class="boton-container">
-          <button type="submit" class="boton">Realizar Pedido</button>
-        </div>
-      </form>
+		<form action="#" method="POST" th:action="@{/CamposPedido}"
+			th:object="${pedido}">
+			<table>
+				<thead>
+					<tr>
+						<th>Planta</th>
+						<th>STOCK DISPONIBLE</th>
+						<th>Seleccione Cantidad</th>
+					</tr>
+				</thead>
+				<tbody>
 
-      <div class="boton-container">
-        <a href="/MenuInvitado" class="boton">Menu Invitado</a>
-      </div>
-      
-    </div>
-  </body>
+					<tr th:each="planta : ${plantas}">
+
+
+						<td th:text="${planta.nombrecomun}"></td>
+
+
+						<td th:text="${planta.ejemplares.size()}"></td>
+
+						<td>
+
+							<div th:if="${planta.ejemplares.size() > 0}">
+								<label for="cantidades-${planta.codigo}">Cantidad:</label> <select
+									th:field="*{cantidades[${planta.codigo}]}">
+
+									<option
+										th:each="i : ${#numbers.sequence(1, planta.ejemplares.size())}"
+										th:value="${i}" th:text="${i}"></option>
+								</select>
+							</div>
+
+							<div th:unless="${planta.ejemplares.size() > 0}">No hay
+								cantidad disponible</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+
+			<div class="boton-container">
+				<button type="submit" class="boton">Realizar Pedido</button>
+			</div>
+		</form>
+
+
+		<div class="boton-container">
+			<a href="/MenuInvitado" class="boton">Menú Invitado</a>
+		</div>
+		<div class="boton-container">
+			<a href="/GestiondePlantas" class="boton">Volver a Gestión de
+				Plantas</a>
+		</div>
+	</div>
+</body>
 </html>
