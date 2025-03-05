@@ -28,7 +28,6 @@ public class PedidoController {
 	@Autowired
 	ServiciosPlanta servPlanta;
 
-	// Acción que maneja la creación del pedido
 	@PostMapping("/CamposPedido")
 	public String RealizarPedido(@ModelAttribute Pedido RealizarPedido, Model model) {
 
