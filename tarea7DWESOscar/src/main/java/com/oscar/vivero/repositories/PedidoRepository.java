@@ -8,4 +8,5 @@ import com.oscar.vivero.modelo.Pedido;
 @Service
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
+	Pedido findTopByOrderByFechaDesc();
 }

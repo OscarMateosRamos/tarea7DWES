@@ -18,85 +18,120 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "ejemplares")
 public class Ejemplar implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	private Long id;
+    @Column
+    private String nombre;
 
-	@Column
-	private String nombre;
+    @ManyToOne
+    @JoinColumn(name = "idplanta")
+    private Planta planta;
 
-	@ManyToOne
-	@JoinColumn(name = "idplanta")
-	private Planta planta;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "idejemplar")  // Esto debería hacer referencia a la relación con el ejemplar.
+    private List<Mensaje> mensajes;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idmensaje")
-	private List<Mensaje> mensajes;
+    @ManyToOne
+    @JoinColumn(name = "idpedido")
+    private Pedido pedido;
 
-	@ManyToOne
-	@JoinColumn(name = "idpedido")
-	private Pedido pedido;
+  
+    @Column(nullable = false)
+    private boolean disponible = true;  
 
-	public Ejemplar() {
+    
+    @Column
+    private String anotacion;   
 
-	}
+    public Ejemplar() {}
 
-	public Ejemplar(Long id, String nombre, Planta planta, List<Mensaje> mensajes, Pedido pedido) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.planta = planta;
-		this.mensajes = mensajes;
-		this.pedido = pedido;
-	}
+    public Ejemplar(Long id, String nombre, Planta planta, List<Mensaje> mensajes, Pedido pedido, boolean disponible, String anotacion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.planta = planta;
+        this.mensajes = mensajes;
+        this.pedido = pedido;
+        this.disponible = disponible;
+        this.anotacion = anotacion;
+    }
 
-	public Long getId() {
-		return id;
-	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public Planta getPlanta() {
-		return planta;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public void setPlanta(Planta planta) {
-		this.planta = planta;
-	}
+    public Planta getPlanta() {
+        return planta;
+    }
 
-	public List<Mensaje> getMensajes() {
-		return mensajes;
-	}
+    public void setPlanta(Planta planta) {
+        this.planta = planta;
+    }
 
-	public void setMensajes(List<Mensaje> mensajes) {
-		this.mensajes = mensajes;
-	}
+    public List<Mensaje> getMensajes() {
+        return mensajes;
+    }
 
-	public Pedido getPedido() {
-		return pedido;
-	}
+    public void setMensajes(List<Mensaje> mensajes) {
+        this.mensajes = mensajes;
+    }
 
-	public void setPedido(Pedido pedido) {
-		this.pedido = pedido;
-	}
+    public Pedido getPedido() {
+        return pedido;
+    }
 
-	@Override
-	public String toString() {
-		return "Ejemplar [id=" + id + ", nombre=" + nombre + ", planta=" + planta + ", mensajes=" + mensajes
-				+ ", pedido=" + pedido + "]";
-	}
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
+    }
 
+    public boolean isDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+    }
+
+    public String getAnotacion() {
+        return anotacion;
+    }
+
+    public void setAnotacion(String anotacion) {
+        this.anotacion = anotacion;
+    }
+
+    @Override
+    public String toString() {
+        return "Ejemplar [id=" + id + ", nombre=" + nombre + ", planta=" + planta + ", mensajes=" + mensajes
+                + ", pedido=" + pedido + ", disponible=" + disponible + ", anotacion=" + anotacion + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ejemplar ejemplar = (Ejemplar) o;
+        return disponible == ejemplar.disponible && Objects.equals(id, ejemplar.id) && Objects.equals(nombre, ejemplar.nombre) && Objects.equals(planta, ejemplar.planta) && Objects.equals(mensajes, ejemplar.mensajes) && Objects.equals(pedido, ejemplar.pedido) && Objects.equals(anotacion, ejemplar.anotacion);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nombre, planta, mensajes, pedido, disponible, anotacion);
+    }
 }

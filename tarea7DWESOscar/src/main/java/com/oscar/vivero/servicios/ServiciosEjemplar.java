@@ -34,72 +34,80 @@ public class ServiciosEjemplar {
 	public void insertarEjemplar(Ejemplar ej) {
 		ejemplarrepo.saveAndFlush(ej);
 
-		List<Ejemplar> ejemplares = ejemplarrepo.findAll();
+		Optional<Ejemplar> existenteEjemplar = ejemplarrepo.findByNombre(ej.getNombre());
 
-		for (Ejemplar e : ejemplares) {
-			if (e.getNombre().equals(ej.getNombre())) {
-				String nuevoNombre = ej.getNombre() + "_" + e.getId();
-				ej.setNombre(nuevoNombre);
-				ejemplarrepo.saveAndFlush(ej);
+		if (existenteEjemplar.isPresent()) {
 
-				Mensaje m = new Mensaje();
-
-				LocalDate fechahora = LocalDate.now();
-				Date date = Date.valueOf(fechahora);
-
-				Optional<Persona> p = servPersona.buscarPorId((long) 1);
-
-				String mensaje = "Añadido nuevo ejemplar " + ej.getNombre() + " por " + controlador.getUsername() + " ("
-						+ fechahora + " ).";
-				m.setEjemplar(ej);
-				m.setFechahora(date);
-				m.setMensaje(mensaje);
-
-				Optional<Persona> personas = servPersona.buscarPorId(Long.valueOf(1));
-				m.setPersona(personas.get());
-
-				servMensaje.insertar(m);
-			}
+			Ejemplar existing = existenteEjemplar.get();
+			String nuevoNombre = ej.getNombre() + "_" + existing.getId();
+			ej.setNombre(nuevoNombre);
+			ejemplarrepo.saveAndFlush(ej);
 		}
+
+		Mensaje m = new Mensaje();
+		LocalDate fechahora = LocalDate.now();
+		Date date = Date.valueOf(fechahora);
+
+		Optional<Persona> p = servPersona.buscarPorId(1L);
+		if (p.isPresent()) {
+			m.setPersona(p.get());
+		}
+
+		String mensaje = "Añadido nuevo ejemplar " + ej.getNombre() + " por " + controlador.getUsername() + " ("
+				+ fechahora + " ).";
+		m.setEjemplar(ej);
+		m.setFechahora(date);
+		m.setMensaje(mensaje);
+
+		servMensaje.insertar(m);
 	}
 
+	@Transactional
 	public List<Ejemplar> listaejemplaresPorTipoPlanta(String codigo) {
-		List<Ejemplar> ejemplares = ejemplarrepo.ejemplaresPorTipoPlanta(codigo);
-		return ejemplares;
+		return ejemplarrepo.ejemplaresPorTipoPlanta(codigo);
 	}
 
+	@Transactional
 	public Ejemplar buscarPorNombre(String nombre) {
-		Ejemplar ej = new Ejemplar();
-		List<Ejemplar> ejemplares = ejemplarrepo.findAll();
-		for (Ejemplar e : ejemplares) {
-			if (e.getNombre().equals(nombre)) {
-				ej = e;
-			}
-		}
-		return ej;
+		return ejemplarrepo.findByNombre(nombre).orElse(null);
 	}
 
+	@Transactional
 	public boolean existeIdEjemplar(Long id) {
 		return ejemplarrepo.existsById(id);
 	}
 
+	@Transactional
 	public boolean existeNombreEjemplar(String nombre) {
 		return ejemplarrepo.existsByNombre(nombre);
 	}
 
+	@Transactional
 	public List<Ejemplar> vertodosEjemplares() {
 		return ejemplarrepo.findAll();
 	}
 
+	@Transactional
 	public Ejemplar buscarPorId(Long id) {
 		Optional<Ejemplar> ejemplarOptional = ejemplarrepo.findById(id);
-		Ejemplar ejemplar = ejemplarOptional.orElse(null);
+		if (ejemplarOptional.isPresent()) {
+			Ejemplar ejemplar = ejemplarOptional.get();
 
-		if (ejemplar != null) {
-
-			Hibernate.initialize(ejemplar.getMensajes());
+			if (!ejemplar.getMensajes().isEmpty()) {
+				Hibernate.initialize(ejemplar.getMensajes());
+			}
+			return ejemplar;
 		}
+		return null;
+	}
 
-		return ejemplar;
+	public void actualizarEjemplarAlRealizarPedido(Ejemplar ejemplar, String mensaje) {
+		ejemplar.setDisponible(false);
+		ejemplar.setAnotacion(mensaje);
+		ejemplarrepo.save(ejemplar);
+	}
+
+	public List<Ejemplar> obtenerEjemplaresDisponiblesPorPlanta(String codigoPlanta) {
+		return ejemplarrepo.findByPlantaCodigoAndDisponibleTrue(codigoPlanta);
 	}
 }

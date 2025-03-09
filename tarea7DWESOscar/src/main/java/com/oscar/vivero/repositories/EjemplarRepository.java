@@ -20,4 +20,8 @@ public interface EjemplarRepository extends JpaRepository<Ejemplar, Long> {
 
 	boolean existsByNombre(String nombre);
 
+	@Query("SELECT e FROM Ejemplar e LEFT JOIN FETCH e.mensajes WHERE e.id = :id")
+	Ejemplar findByIdWithMensajes(@Param("id") Long id);
+
+	List<Ejemplar> findByPlantaCodigoAndDisponibleTrue(String codigoPlanta);
 }

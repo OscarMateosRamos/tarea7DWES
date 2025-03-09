@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cesta de Compra</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/CSS/estilosCestaCompra.css}">
+</head>
+<body>
+    <header>
+        <h1>Cesta de Compra</h1>
+    </header>
+
+    <div class="container">
+       
+        <div th:if="${cestaCompra.estaVacia()}">
+            <p th:text="${mensaje != null ? mensaje : 'Tu cesta está vacía.'}"></p>
+        </div>
+
+        <div th:unless="${cestaCompra.estaVacia()}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Planta</th>
+                        <th>Cantidad</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="pedido : ${cestaCompra.obtenerPedidos()}">
+                        <td th:text="${pedido.planta.nombrecomun}"></td>
+                        <td th:text="${pedido.cantidad}"></td>
+                        <td>
+                            <a th:href="@{/RetirarDeCesta/{pedidoId}(pedidoId=${pedido.id})}" class="boton">Retirar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+         
+            <div class="boton-container">
+                <a href="/Pagar" class="boton">Proceder al Pago</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

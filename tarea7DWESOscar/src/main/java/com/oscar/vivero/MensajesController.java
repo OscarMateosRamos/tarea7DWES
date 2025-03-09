@@ -22,6 +22,8 @@ import com.oscar.vivero.servicios.ServiciosMensaje;
 import com.oscar.vivero.servicios.ServiciosPersona;
 import com.oscar.vivero.servicios.ServiciosPlanta;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class MensajesController {
 
@@ -42,7 +44,14 @@ public class MensajesController {
 
 	@PostMapping("/CamposMensaje")
 	public String InsertarMensaje(@RequestParam Long id, @RequestParam String mensaje, @RequestParam String fechahora,
-			Model model) {
+			Model model, HttpSession session) {
+
+		String usuario = (String) session.getAttribute("usuario");
+
+		if (usuario == null) {
+			model.addAttribute("error", "No estás autenticado. Por favor, inicia sesión.");
+			return "formularioLogIn";
+		}
 
 		if (id == null || id == 0) {
 			model.addAttribute("error", "Debe seleccionar un ejemplar.");
@@ -54,11 +63,26 @@ public class MensajesController {
 			return "CrearMensaje";
 		}
 
-		Persona p = servPersona.buscarPorNombre(controlador.getUsername());
+		Persona p = servPersona.buscarPorNombre(usuario);
 		Ejemplar ej = servEjemplar.buscarPorId(id);
 
+		if (p == null) {
+			model.addAttribute("error", "No se ha encontrado a la persona.");
+			return "CrearMensaje";
+		}
+
+		if (ej == null) {
+			model.addAttribute("error", "No se ha encontrado el ejemplar.");
+			return "CrearMensaje";
+		}
+
 		Date fechaHoraDate;
-		fechaHoraDate = Date.valueOf(fechahora);
+		try {
+			fechaHoraDate = Date.valueOf(fechahora);
+		} catch (IllegalArgumentException e) {
+			model.addAttribute("error", "Fecha no válida, debe ser en formato yyyy-MM-dd.");
+			return "CrearMensaje";
+		}
 
 		Mensaje m = new Mensaje();
 		m.setFechahora(fechaHoraDate);
@@ -68,6 +92,7 @@ public class MensajesController {
 
 		servMensaje.insertar(m);
 
+		model.addAttribute("success", "Mensaje insertado exitosamente.");
 		return "CrearMensaje";
 	}
 
@@ -131,37 +156,33 @@ public class MensajesController {
 	}
 
 	@GetMapping("/filtrarMensajesCodigoPlanta")
-	public String filtrarMensajesPorCodigoPlanta(@RequestParam(value = "tipoPlanta", required = false) String tipoPlanta, Model model) {
-	    try {
-	    
-	        List<String> tiposPlantas = servPlanta.listarTiposDePlanta(); 
-	        model.addAttribute("tiposPlantas", tiposPlantas);
+	public String filtrarMensajesPorCodigoPlanta(
+			@RequestParam(value = "tipoPlanta", required = false) String tipoPlanta, Model model) {
+		try {
 
-	 
-	        if (tipoPlanta == null || tipoPlanta.isEmpty()) {
-	            model.addAttribute("error", "Por favor, seleccione un tipo de planta.");
-	            return "FiltrarMensajeTipoPlanta";  
-	        }
+			List<String> tiposPlantas = servPlanta.listarTiposDePlanta();
+			model.addAttribute("tiposPlantas", tiposPlantas);
 
-	       
-	        List<Mensaje> mensajesFiltrados = servMensaje.listamensajesPorCodigoPlanta(tipoPlanta);
+			if (tipoPlanta == null || tipoPlanta.isEmpty()) {
+				model.addAttribute("error", "Por favor, seleccione un tipo de planta.");
+				return "FiltrarMensajeTipoPlanta";
+			}
 
-	      
-	        if (mensajesFiltrados.isEmpty()) {
-	            model.addAttribute("error", "No se encontraron mensajes para el tipo de planta seleccionado.");
-	        } else {
-	            model.addAttribute("mensajes", mensajesFiltrados);
-	        }
+			List<Mensaje> mensajesFiltrados = servMensaje.listamensajesPorCodigoPlanta(tipoPlanta);
 
-	        return "FiltrarMensajeTipoPlanta";  
+			if (mensajesFiltrados.isEmpty()) {
+				model.addAttribute("error", "No se encontraron mensajes para el tipo de planta seleccionado.");
+			} else {
+				model.addAttribute("mensajes", mensajesFiltrados);
+			}
 
-	    } catch (Exception e) {
-	       
-	        model.addAttribute("error", "Ocurrió un error al filtrar los mensajes.");
-	        return "FiltrarMensajeTipoPlanta";  
+			return "FiltrarMensajeTipoPlanta";
+
+		} catch (Exception e) {
+
+			model.addAttribute("error", "Ocurrió un error al filtrar los mensajes.");
+			return "FiltrarMensajeTipoPlanta";
+		}
+
 	}
-
-
-
-}
 }
