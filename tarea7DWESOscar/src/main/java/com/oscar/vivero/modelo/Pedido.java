@@ -40,7 +40,7 @@ public class Pedido {
 	private List<Cliente> clientes = new LinkedList<Cliente>();
 
 	@ElementCollection
-	@MapKeyColumn(name = "codigo_planta")
+	@MapKeyColumn(name = "idejemplar")
 	@Column(name = "cantidad")
 	private Map<String, Integer> cantidades;
 

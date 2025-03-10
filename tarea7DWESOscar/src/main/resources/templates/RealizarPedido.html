@@ -19,33 +19,38 @@
 				<thead>
 					<tr>
 						<th>Planta</th>
-						<th>Stock Disponible</th>
+						<th>Ejemplar</th>
 						<th>Seleccione Cantidad</th>
 					</tr>
 				</thead>
 				<tbody>
 
-					<tr th:each="planta : ${plantas}">
-						<td th:text="${planta.nombrecomun}"></td>
-						<td th:text="${planta.ejemplares.size()}"></td>
+
+					<tr th:each="ejemplar : ${ejemplares}">
+						<td th:text="${ejemplar.planta.nombrecomun}"></td>
+						<td th:text="${ejemplar.codigo}"></td> 
 						<td>
-							<div th:if="${planta.ejemplares.size() > 0}">
-								<label th:for="cantidades-${planta.codigo}">Cantidad:</label> <select
-									th:field="*{cantidades[planta.codigo]}">
-									<option
-										th:each="i : ${#numbers.sequence(1, planta.ejemplares.size())}"
-										th:value="${i}" th:text="${i}"></option>
+
+							<div th:if="${ejemplar != null}">
+								<label th:for="cantidades-${ejemplar.codigo}">Cantidad:</label> 
+								<select th:field="*{cantidades[ejemplar.codigo]}">
+						
+						
+						
+									<option th:each="i : ${#numbers.sequence(1, 10)}" th:value="${i}" th:text="${i}"></option>
 								</select>
 							</div>
-							<div th:unless="${planta.ejemplares.size() > 0}">No hay
-								stock disponible</div>
+
+						
+							<div th:unless="${ejemplar != null}">No hay ejemplares disponibles</div>
 						</td>
 					</tr>
+
 				</tbody>
 			</table>
 
 			<div class="boton-container">
-				<button type="submit" class="boton">Realizar Pedido</button>
+				<button type="submit" class="boton" th:action="@{/RealizarPedido}">Realizar Pedido</button>
 			</div>
 		</form>
 
