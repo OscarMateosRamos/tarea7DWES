@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Realizar Pedido</title>
-<link rel="stylesheet" type="text/css"
-	th:href="@{/CSS/estilosRealizarPedido.css}">
+<link rel="stylesheet" th:href="@{/CSS/estilosRealizarPedido.css}">
 </head>
 <body>
 	<header>
@@ -13,49 +12,48 @@
 	</header>
 
 	<div class="container">
-		<form action="#" method="POST" th:action="@{/CamposPedido}"
-			th:object="${pedido}">
+		<form th:action="@{/CamposPedido}" th:object="${pedido}" method="POST">
 			<table>
 				<thead>
 					<tr>
 						<th>Planta</th>
 						<th>Ejemplar</th>
-						<th>Seleccione Cantidad</th>
+						<th>Cantidad</th>
 					</tr>
 				</thead>
 				<tbody>
+					<tr th:each="planta : ${plantas}">
+
+						<td th:text="${planta.nombrecomun}"></td>
 
 
-					<tr th:each="ejemplar : ${ejemplares}">
-						<td th:text="${ejemplar.planta.nombrecomun}"></td>
-						<td th:text="${ejemplar.codigo}"></td> 
+						<td th:text="${planta.ejemplar.size()}"></td>
+
+
 						<td>
-
-							<div th:if="${ejemplar != null}">
-								<label th:for="cantidades-${ejemplar.codigo}">Cantidad:</label> 
-								<select th:field="*{cantidades[ejemplar.codigo]}">
-						
-						
-						
-									<option th:each="i : ${#numbers.sequence(1, 10)}" th:value="${i}" th:text="${i}"></option>
+							<div
+								th:if="${planta.ejemplar != null and !planta.ejemplar.isEmpty()}">
+								<label for="cantidades-${planta.ejemplar[0].codigo}">Cantidad:</label>
+								<select th:field="*{cantidades[planta.ejemplar[0].codigo]}">
+									<option th:each="i : ${#numbers.sequence(1, 10)}"
+										th:value="${i}" th:text="${i}"></option>
 								</select>
 							</div>
-
-						
-							<div th:unless="${ejemplar != null}">No hay ejemplares disponibles</div>
+							<div
+								th:unless="${planta.ejemplar != null and !planta.ejemplar.isEmpty()}">
+								No hay ejemplares disponibles</div>
 						</td>
 					</tr>
-
 				</tbody>
 			</table>
 
-			<div class="boton-container">
-				<button type="submit" class="boton" th:action="@{/RealizarPedido}">Realizar Pedido</button>
+			<div>
+				<button type="submit">Realizar Pedido</button>
 			</div>
 		</form>
 
-		<div class="boton-container">
-			<a href="/MenuInvitado" class="boton">Menú Invitado</a>
+		<div>
+			<a href="/MenuInvitado">Menú Invitado</a>
 		</div>
 	</div>
 </body>

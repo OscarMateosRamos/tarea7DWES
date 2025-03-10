@@ -88,8 +88,8 @@ public class ServiciosEjemplar {
 	}
 
 	@Transactional
-	public Ejemplar buscarPorId(Long id) {
-		Optional<Ejemplar> ejemplarOptional = ejemplarrepo.findById(id);
+	public Ejemplar buscarPorId(Long ejemplarCodigo) {
+		Optional<Ejemplar> ejemplarOptional = ejemplarrepo.findById(ejemplarCodigo);
 		if (ejemplarOptional.isPresent()) {
 			Ejemplar ejemplar = ejemplarOptional.get();
 
@@ -100,10 +100,10 @@ public class ServiciosEjemplar {
 		}
 		return null;
 	}
-
+	
+	
 	public void actualizarEjemplarAlRealizarPedido(Ejemplar ejemplar, String mensaje) {
 		ejemplar.setDisponible(false);
-		ejemplar.setAnotacion(mensaje);
 		ejemplarrepo.save(ejemplar);
 	}
 

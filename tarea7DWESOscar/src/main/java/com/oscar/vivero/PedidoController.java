@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.oscar.vivero.modelo.Ejemplar;
+import com.oscar.vivero.modelo.Mensaje;
 import com.oscar.vivero.modelo.Pedido;
 import com.oscar.vivero.servicios.ServiciosEjemplar;
 import com.oscar.vivero.servicios.ServiciosPedido;
@@ -26,13 +27,39 @@ public class PedidoController {
 	@PostMapping("/CamposPedido")
 	public String procesarPedido(@ModelAttribute Pedido pedido, Model model) {
 
-		servPedido.insertarPedido(pedido);
+		if (pedido.getCantidades() != null && !pedido.getCantidades().isEmpty()) {
+			try {
+				pedido.getCantidades().forEach((ejemplarCodigo, cantidad) -> {
+					Long codigo = Long.valueOf(ejemplarCodigo);
+					Ejemplar ejemplar = servEjemplar.buscarPorId(codigo);
+
+					if (ejemplar != null && cantidad > 0) {
+						pedido.agregarEjemplar(ejemplar, cantidad);
+					}
+				});
+
+				
+				Mensaje anotacion = new Mensaje();
+				anotacion.getEjemplar().setNombre(); /// sacar nombre segun codigo de ejemplar
+				
+				pedido.getAnotacion().add(pedido.ge); 
+
+				
+				servPedido.insertarPedido(pedido);
+
+				model.addAttribute("mensajeExito", "Pedido realizado con éxito.");
+			} catch (Exception e) {
+				model.addAttribute("mensajeError", "Ocurrió un error al procesar el pedido.");
+			}
+		} else {
+			model.addAttribute("mensajeError", "Debe seleccionar al menos un ejemplar.");
+		}
 
 		model.addAttribute("pedido", pedido);
+		model.addAttribute("ejemplaresEnPedido", pedido.getEjemplares());
+
 		return "CestaCompra";
 	}
-	
-	
 
 	@GetMapping("/RealizarPedido")
 	public String mostrarRealizarPedido(Model model) {

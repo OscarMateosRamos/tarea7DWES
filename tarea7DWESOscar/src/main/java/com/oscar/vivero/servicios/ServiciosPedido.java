@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
+import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.Pedido;
+import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.repositories.PedidoRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -43,10 +43,35 @@ public class ServiciosPedido {
 		session.setAttribute("cesta", cesta);
 	}
 
-    public Pedido obtenerPedidoPorId(Long idPedido) {
-        
-        return pedidorepo.findById(idPedido).orElse(null);
-    }
-    
-  
+	public Pedido obtenerPedidoPorId(Long idPedido) {
+
+		return pedidorepo.findById(idPedido).orElse(null);
+	}
+
+	public String contarEjemplaresDisponibles(List<Planta> plantas) {
+		StringBuilder disponibilidad = new StringBuilder();
+
+		for (Planta planta : plantas) {
+
+			if (planta.getEjemplares() != null && !planta.getEjemplares().isEmpty()) {
+
+				int cantidadDisponible = planta.getEjemplares().size();
+				disponibilidad.append("Planta: ").append(planta.getNombrecomun()).append(" - Ejemplares disponibles: ")
+						.append(cantidadDisponible).append("\n");
+			} else {
+
+				disponibilidad.append("Planta: ").append(planta.getNombrecomun())
+						.append(" - No hay ejemplares disponibles\n");
+			}
+		}
+
+		return disponibilidad.toString();
+	}
+
+	private List<Ejemplar> ejemplaresEnPedido = new ArrayList<>();
+
+	public List<Ejemplar> getEjemplaresEnPedido() {
+		return ejemplaresEnPedido;
+	}
+
 }

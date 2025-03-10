@@ -1,8 +1,11 @@
 package com.oscar.vivero.modelo;
 
 import java.sql.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -35,17 +39,22 @@ public class Mensaje {
 	@JoinColumn(name = "idpersona")
 	private Persona persona;
 
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "idpedido")
+	private List<Pedido> pedido = new LinkedList<Pedido>();
+
 	public Mensaje() {
 
 	}
 
-	public Mensaje(Long id, Date fechahora, String mensaje, Ejemplar ejemplar, Persona persona) {
+	public Mensaje(Long id, Date fechahora, String mensaje, Ejemplar ejemplar, Persona persona, List<Pedido> pedido) {
 		super();
 		this.id = id;
 		this.fechahora = fechahora;
 		this.mensaje = mensaje;
 		this.ejemplar = ejemplar;
 		this.persona = persona;
+		this.pedido = pedido;
 	}
 
 	public Long getId() {
@@ -88,9 +97,21 @@ public class Mensaje {
 		this.persona = persona;
 	}
 
+	public List<Pedido> getPedido() {
+		return pedido;
+	}
+
+	public void setPedido(List<Pedido> pedido) {
+		this.pedido = pedido;
+	}
+
+	
+	
+	
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(ejemplar, fechahora, id, mensaje, persona);
+		return Objects.hash(ejemplar, fechahora, id, mensaje, pedido, persona);
 	}
 
 	@Override
@@ -104,13 +125,14 @@ public class Mensaje {
 		Mensaje other = (Mensaje) obj;
 		return Objects.equals(ejemplar, other.ejemplar) && Objects.equals(fechahora, other.fechahora)
 				&& Objects.equals(id, other.id) && Objects.equals(mensaje, other.mensaje)
-				&& Objects.equals(persona, other.persona);
+				&& Objects.equals(pedido, other.pedido) && Objects.equals(persona, other.persona);
 	}
 
 	@Override
 	public String toString() {
-		return "Mensaje [id=" + id + ", fechahora=" + fechahora + ", mensaje=" + mensaje + ", ejemplar="
-				+ ejemplar.getId() + ", persona=" + persona.getId() + "]";
+		return "Mensaje [id=" + id + ", fechahora=" + fechahora + ", mensaje=" + mensaje + ", ejemplar=" + ejemplar
+				+ ", persona=" + persona + ", pedido=" + pedido + "]";
 	}
 
+	
 }

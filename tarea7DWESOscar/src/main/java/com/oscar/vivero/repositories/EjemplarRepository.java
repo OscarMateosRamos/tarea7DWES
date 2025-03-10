@@ -24,4 +24,9 @@ public interface EjemplarRepository extends JpaRepository<Ejemplar, Long> {
 	Ejemplar findByIdWithMensajes(@Param("id") Long id);
 
 	List<Ejemplar> findByPlantaCodigoAndDisponibleTrue(String codigoPlanta);
+	
+	
+	List<Ejemplar> findEjemplarByCodigo(String ejemplarCodigo) ;
+	
+	
 }
