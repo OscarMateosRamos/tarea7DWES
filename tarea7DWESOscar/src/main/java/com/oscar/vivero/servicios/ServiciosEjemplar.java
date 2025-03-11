@@ -100,8 +100,18 @@ public class ServiciosEjemplar {
 		}
 		return null;
 	}
-	
-	
+
+	@Transactional
+	public String obtenerNombrePorId(Long ejemplarCodigo) {
+		Optional<Ejemplar> ejemplarOptional = ejemplarrepo.findById(ejemplarCodigo);
+
+		if (ejemplarOptional.isPresent()) {
+			return ejemplarOptional.get().getNombre();
+		}
+
+		return null;
+	}
+
 	public void actualizarEjemplarAlRealizarPedido(Ejemplar ejemplar, String mensaje) {
 		ejemplar.setDisponible(false);
 		ejemplarrepo.save(ejemplar);
