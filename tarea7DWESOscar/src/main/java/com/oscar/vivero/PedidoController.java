@@ -35,18 +35,16 @@ public class PedidoController {
 
 					if (ejemplar != null && cantidad > 0) {
 						pedido.agregarEjemplar(ejemplar, cantidad);
+
+						Mensaje anotacion = new Mensaje();
+						anotacion.setEjemplar(ejemplar);
+						anotacion.getEjemplar().setNombre(servEjemplar.obtenerNombrePorId(codigo));
+
+						pedido.getAnotacion().add(anotacion);
 					}
 				});
 
-				
-				Mensaje anotacion = new Mensaje();
-				anotacion.getEjemplar().setNombre(); /// sacar nombre segun codigo de ejemplar
-				
-				pedido.getAnotacion().add(pedido.ge); 
-
-				
 				servPedido.insertarPedido(pedido);
-
 				model.addAttribute("mensajeExito", "Pedido realizado con éxito.");
 			} catch (Exception e) {
 				model.addAttribute("mensajeError", "Ocurrió un error al procesar el pedido.");
@@ -70,6 +68,7 @@ public class PedidoController {
 		return "RealizarPedido";
 	}
 
+	
 //	@GetMapping("/PedidoRealizado")
 //	public String mostrarRealizarPedido(Model model) {
 //
