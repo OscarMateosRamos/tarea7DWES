@@ -1,8 +1,6 @@
 package com.oscar.vivero.modelo;
 
 import java.sql.Date;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
@@ -14,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,10 +25,15 @@ public class Mensaje {
 
 	@Column(name = "fechahora")
 	private Date fechahora;
+
 	@Column(name = "mensaje")
 	private String mensaje;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "idpedido")
+	private Pedido pedido;
+
+	@ManyToOne
 	@JoinColumn(name = "idejemplar")
 	private Ejemplar ejemplar;
 
@@ -39,22 +41,17 @@ public class Mensaje {
 	@JoinColumn(name = "idpersona")
 	private Persona persona;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idpedido")
-	private List<Pedido> pedido = new LinkedList<Pedido>();
-
 	public Mensaje() {
-
 	}
 
-	public Mensaje(Long id, Date fechahora, String mensaje, Ejemplar ejemplar, Persona persona, List<Pedido> pedido) {
+	public Mensaje(Long id, Date fechahora, String mensaje, Pedido pedido, Ejemplar ejemplar, Persona persona) {
 		super();
 		this.id = id;
 		this.fechahora = fechahora;
 		this.mensaje = mensaje;
+		this.pedido = pedido;
 		this.ejemplar = ejemplar;
 		this.persona = persona;
-		this.pedido = pedido;
 	}
 
 	public Long getId() {
@@ -81,6 +78,14 @@ public class Mensaje {
 		this.mensaje = mensaje;
 	}
 
+	public Pedido getPedido() {
+		return pedido;
+	}
+
+	public void setPedido(Pedido pedido) {
+		this.pedido = pedido;
+	}
+
 	public Ejemplar getEjemplar() {
 		return ejemplar;
 	}
@@ -96,18 +101,6 @@ public class Mensaje {
 	public void setPersona(Persona persona) {
 		this.persona = persona;
 	}
-
-	public List<Pedido> getPedido() {
-		return pedido;
-	}
-
-	public void setPedido(List<Pedido> pedido) {
-		this.pedido = pedido;
-	}
-
-	
-	
-	
 
 	@Override
 	public int hashCode() {
@@ -133,6 +126,4 @@ public class Mensaje {
 		return "Mensaje [id=" + id + ", fechahora=" + fechahora + ", mensaje=" + mensaje + ", ejemplar=" + ejemplar
 				+ ", persona=" + persona + ", pedido=" + pedido + "]";
 	}
-
-	
 }

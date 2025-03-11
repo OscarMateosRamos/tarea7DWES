@@ -111,7 +111,7 @@ public class ServiciosEjemplar {
 
 		return null;
 	}
-
+	 
 	public void actualizarEjemplarAlRealizarPedido(Ejemplar ejemplar, String mensaje) {
 		ejemplar.setDisponible(false);
 		ejemplarrepo.save(ejemplar);

@@ -21,7 +21,7 @@ public class MainController {
 
 	@Autowired
 	Controlador controlador;
-
+	
 	@GetMapping({ "/", "MenuInvitado" })
 	public String MenuInvitado() {
 		return "MenuInvitado";
@@ -51,50 +51,44 @@ public class MainController {
 
 	@PostMapping("/Sesion")
 	public String logInSubmit(@ModelAttribute Credenciales formularioLogIn, Model model, HttpSession session) {
+	    
+	    String usuario = formularioLogIn.getUsuario();
+	    String password = formularioLogIn.getPassword();
 
-		String usuario = formularioLogIn.getUsuario();
-		String password = formularioLogIn.getPassword();
+	    if (usuario == null || password == null || usuario.trim().isEmpty() || password.trim().isEmpty()) {
+	        model.addAttribute("error", "Por favor, ingrese ambos campos.");
+	        return "formularioLogIn";
+	    }
 
-		if (usuario == null || password == null || usuario.trim().isEmpty() || password.trim().isEmpty()) {
-			model.addAttribute("error", "Por favor, ingrese ambos campos.");
-			return "formularioLogIn";
-		}
+	    boolean existeCred = servCredenciales.verificaUsuario(usuario, password);
+	    if (!existeCred) {
+	        model.addAttribute("error", "Las credenciales no existen.");
+	        return "formularioLogIn";
+	    }
 
-		boolean existeCred = servCredenciales.verificaUsuario(usuario, password);
-		if (!existeCred) {
-			model.addAttribute("error", "Las credenciales no existen.");
-			return "formularioLogIn";
-		}
+	    Credenciales c = servCredenciales.buscarCredencialPorUsuario(usuario);
 
-		Credenciales c = servCredenciales.buscarCredencialPorUsuario(usuario);
+	    String rol = c.getRol();
 
-		session.setAttribute("credenciales", c);
-		session.setAttribute("usuario", usuario);
+	    if ("admin".equals(rol)) {
+	        System.out.println("--Bienvenido Admin--");
+	        return "redirect:/MenuAdmin"; 
+	    }
 
-		String rol = c.getRol();
+	    if ("personal".equals(rol)) {
+	        System.out.println("--Bienvenido Personal--");
+	        return "redirect:/MenuPersonal";  
+	    }
 
-		if ("admin".equals(rol)) {
-			System.out.println("--Bienvenido Admin--");
-			controlador.setUsername(usuario);
-			return "MenuAdmin";
-		}
+	    if ("cliente".equals(rol)) {
+	        System.out.println("--Bienvenido Cliente--");
+	        return "redirect:/RealizarPedido"; 
+	    }
 
-		if ("personal".equals(rol)) {
-			System.out.println("--Bienvenido Personal--");
-			controlador.setUsername(usuario);
-			return "MenuPersonal";
-		}
-
-		if ("cliente".equals(rol)) {
-			System.out.println("--Bienvenido Cliente--");
-			controlador.setUsername(usuario);
-			return "RealizarPedido";
-		}
-		
-		System.out.println("--Rol no reconocido--");
-		return "formularioLogIn";
-
+	    System.out.println("--Rol no reconocido--");
+	    return "formularioLogIn";  
 	}
+
 
 	@GetMapping("/CerrarSesion")
 	public String cerrarSesion(HttpSession session) {
