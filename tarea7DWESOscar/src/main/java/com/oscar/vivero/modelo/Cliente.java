@@ -2,6 +2,7 @@ package com.oscar.vivero.modelo;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
@@ -11,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -46,18 +48,16 @@ public class Cliente implements Serializable {
 	@JoinColumn(name = "idcredencial")
 	private Credenciales credencial;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idpedido")
-	private Pedido pedidos;
+	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+	private List<Pedido> pedidos;
 
 	public Cliente() {
 
 	}
 
-	public Cliente(Long id, String nombre, Date fechanac, String nif, String direccion, String email, String telefono,
-			Credenciales credencial, Pedido pedidos) {
+	public Cliente(String nombre, Date fechanac, String nif, String direccion, String email, String telefono,
+			Credenciales credencial, List<Pedido> pedidos) {
 		super();
-		this.id = id;
 		this.nombre = nombre;
 		this.fechanac = fechanac;
 		this.nif = nif;
@@ -132,12 +132,33 @@ public class Cliente implements Serializable {
 		this.credencial = credencial;
 	}
 
-	public Pedido getPedidos() {
+	public List<Pedido> getPedidos() {
 		return pedidos;
 	}
 
-	public void setPedidos(Pedido pedidos) {
+	public void setPedidos(List<Pedido> pedidos) {
 		this.pedidos = pedidos;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(credencial, direccion, email, fechanac, id, nif, nombre, pedidos, telefono);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cliente other = (Cliente) obj;
+		return Objects.equals(credencial, other.credencial) && Objects.equals(direccion, other.direccion)
+				&& Objects.equals(email, other.email) && Objects.equals(fechanac, other.fechanac)
+				&& Objects.equals(id, other.id) && Objects.equals(nif, other.nif)
+				&& Objects.equals(nombre, other.nombre) && Objects.equals(pedidos, other.pedidos)
+				&& Objects.equals(telefono, other.telefono);
 	}
 
 	@Override

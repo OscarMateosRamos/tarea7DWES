@@ -12,13 +12,22 @@
 	</header>
 
 	<div class="container">
+
+		<div th:if="${mensajeExito}" class="alert success">
+			<p th:text="${mensajeExito}"></p>
+		</div>
+		<div th:if="${mensajeError}" class="alert error">
+			<p th:text="${mensajeError}"></p>
+		</div>
+
 		<form th:action="@{/CamposPedido}" th:object="${pedido}" method="POST">
 			<table>
 				<thead>
 					<tr>
 						<th>Planta</th>
 						<th>Ejemplar</th>
-						<th>Cantidad</th>
+						<th>Cantidad Disponible</th>
+						<th>Cantidad a Pedir</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -26,23 +35,27 @@
 
 						<td th:text="${planta.nombrecomun}"></td>
 
-
-						<td th:text="${planta.ejemplar.size()}"></td>
-
-
 						<td>
-							<div
-								th:if="${planta.ejemplar != null and !planta.ejemplar.isEmpty()}">
-								<label for="cantidades-${planta.ejemplar[0].codigo}">Cantidad:</label>
-								<select th:field="*{cantidades[planta.ejemplar[0].codigo]}">
-									<option th:each="i : ${#numbers.sequence(1, 10)}"
+							<div th:each="ejemplar : ${planta.ejemplares}">
+
+								<label th:for="'cantidades-' + ${ejemplar.id}">Ejemplar:
+									${ejemplar.nombre} - Código: ${ejemplar.id}</label>
+
+
+								<p
+									th:text="'Cantidad Disponible: ' + ${ejemplar.cantidadDisponible}"></p>
+
+
+								<select th:field="*{cantidades[${ejemplar.id}]}">
+									<option
+										th:each="i : ${#numbers.sequence(1, ejemplar.cantidadDisponible)}"
 										th:value="${i}" th:text="${i}"></option>
 								</select>
 							</div>
-							<div
-								th:unless="${planta.ejemplar != null and !planta.ejemplar.isEmpty()}">
-								No hay ejemplares disponibles</div>
 						</td>
+
+
+						<td th:text="${planta.ejemplares.size()}"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -56,5 +69,6 @@
 			<a href="/MenuInvitado">Menú Invitado</a>
 		</div>
 	</div>
+
 </body>
 </html>

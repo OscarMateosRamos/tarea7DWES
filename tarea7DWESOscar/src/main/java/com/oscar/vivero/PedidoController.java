@@ -1,6 +1,7 @@
 package com.oscar.vivero;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.Mensaje;
 import com.oscar.vivero.modelo.Pedido;
+import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.servicios.ServiciosEjemplar;
 import com.oscar.vivero.servicios.ServiciosPedido;
+import com.oscar.vivero.servicios.ServiciosPlanta;
 
 @Controller
 public class PedidoController {
@@ -24,6 +27,9 @@ public class PedidoController {
 	@Autowired
 	private ServiciosEjemplar servEjemplar;
 
+	@Autowired
+	private ServiciosPlanta servPlanta;
+
 	@PostMapping("/CamposPedido")
 	public String procesarPedido(@ModelAttribute Pedido pedido, Model model) {
 
@@ -33,17 +39,19 @@ public class PedidoController {
 					Long codigo = Long.valueOf(ejemplarCodigo);
 					Ejemplar ejemplar = servEjemplar.buscarPorId(codigo);
 
-					if (ejemplar != null && cantidad > 0) {
+					
+					if (ejemplar != null && ejemplar.isDisponible() && cantidad > 0) {
 						pedido.agregarEjemplar(ejemplar, cantidad);
 
 						Mensaje anotacion = new Mensaje();
 						anotacion.setEjemplar(ejemplar);
 						anotacion.getEjemplar().setNombre(servEjemplar.obtenerNombrePorId(codigo));
-
+						anotacion.setFechahora(new java.sql.Date(System.currentTimeMillis()));
 						pedido.getAnotacion().add(anotacion);
 					}
 				});
 
+				
 				servPedido.insertarPedido(pedido);
 				model.addAttribute("mensajeExito", "Pedido realizado con éxito.");
 			} catch (Exception e) {
@@ -62,20 +70,19 @@ public class PedidoController {
 	@GetMapping("/RealizarPedido")
 	public String mostrarRealizarPedido(Model model) {
 
-		List<Ejemplar> ejemplares = servEjemplar.vertodosEjemplares();
-		model.addAttribute("ejemplares", ejemplares);
+		List<Planta> plantas = servPlanta.obtenerPlantasConEjemplares();
+
+		for (Planta planta : plantas) {
+
+			List<Ejemplar> ejemplaresDisponibles = planta.getEjemplares().stream().filter(Ejemplar::isDisponible)
+					.collect(Collectors.toList());
+
+			planta.setEjemplares(ejemplaresDisponibles);
+		}
+
+		model.addAttribute("plantas", plantas);
 		model.addAttribute("pedido", new Pedido());
 		return "RealizarPedido";
 	}
-
-//	
-//	@GetMapping("/PedidoRealizado")
-//	public String mostrarRealizarPedido(Model model) {
-//
-//		List<Ejemplar> ejemplares = servEjemplar.vertodosEjemplares();
-//		model.addAttribute("ejemplares", ejemplares);
-//		model.addAttribute("pedido", new Pedido());
-//		return "RealizarPedido";
-//	}
 
 }

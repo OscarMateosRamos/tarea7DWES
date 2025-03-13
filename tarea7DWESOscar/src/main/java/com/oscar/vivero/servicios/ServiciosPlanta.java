@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.repositories.PlantaRepository;
 
@@ -105,21 +106,21 @@ public class ServiciosPlanta {
 		return pl;
 	}
 
+	public List<Planta> obtenerPlantasConEjemplares() {
+		return plantarepo.obtenerPlantasConEjemplares();
+	}
+	
+	
+	public long calcularCantidadDisponible(Planta planta) {
+        
+        return planta.getEjemplares().stream()
+                .filter(Ejemplar::isDisponible) 
+                .count(); 
+    }
+
 	public List<String> listarTiposDePlanta() {
-		try {
-
-			List<String> tiposPlantas = plantarepo.findDistinctTiposDePlanta();
-
-			if (tiposPlantas == null || tiposPlantas.isEmpty()) {
-				return new ArrayList<>();
-			}
-			return tiposPlantas;
-
-		} catch (Exception e) {
-
-			System.err.println("Error al obtener los tipos de planta: " + e.getMessage());
-			return new ArrayList<>();
-		}
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

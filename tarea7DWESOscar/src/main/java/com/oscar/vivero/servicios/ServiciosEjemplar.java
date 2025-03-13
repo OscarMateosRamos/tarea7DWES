@@ -2,6 +2,7 @@ package com.oscar.vivero.servicios;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,13 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.Mensaje;
 import com.oscar.vivero.modelo.Persona;
+import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.repositories.EjemplarRepository;
+import com.oscar.vivero.repositories.PlantaRepository;
 
 @Service
 public class ServiciosEjemplar {
 
 	@Autowired
 	EjemplarRepository ejemplarrepo;
+	
+	@Autowired
+	PlantaRepository plantarrepo;
 
 	@Autowired
 	ServiciosPersona servPersona;
@@ -120,4 +126,9 @@ public class ServiciosEjemplar {
 	public List<Ejemplar> obtenerEjemplaresDisponiblesPorPlanta(String codigoPlanta) {
 		return ejemplarrepo.findByPlantaCodigoAndDisponibleTrue(codigoPlanta);
 	}
+
+	public List<Ejemplar> obtenerEjemplaresConCantidadDisponible() {
+       
+        return ejemplarrepo.findAll();
+    }
 }

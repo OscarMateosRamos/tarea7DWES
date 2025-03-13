@@ -33,9 +33,10 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasRole("ADMIN")  
                 .requestMatchers("/personal/**").hasRole("PERSONAL") 
                 .requestMatchers("/cliente/**").hasRole("CLIENTE")  
+                
             )
-            .formLogin(login -> login
-                .loginPage("/formularioLogIn")  
+            .formLogin(form -> form
+                .loginPage("/MenuInvitado")
                 .permitAll()
             )
             .logout(logout -> logout

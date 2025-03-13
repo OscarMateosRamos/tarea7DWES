@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.oscar.vivero.modelo.Ejemplar;
+import com.oscar.vivero.modelo.Planta;
 
 @Repository
 public interface EjemplarRepository extends JpaRepository<Ejemplar, Long> {
@@ -27,6 +28,8 @@ public interface EjemplarRepository extends JpaRepository<Ejemplar, Long> {
 	
 	
 	List<Ejemplar> findEjemplarById(Long ejemplarId) ;
+
+	List<Ejemplar> findByPlanta(Planta planta);
 	
 	
 }
