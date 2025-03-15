@@ -7,15 +7,15 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class GestiondePlantasController {
 
-	@GetMapping({ "/MenuAdmin", "GestiondePlantas" })
+	@GetMapping({ "GestiondePlantas" })
 	public String GestiondePlantas() {
 
 		return "GestiondePlantas";
 
 	}
 
-	@GetMapping("/gestionPlantasMenuAdmin")  
+	@GetMapping("/GestionPlantasMenuAdmin")  
 	public String mostrarMenuAdmin() {
-	    return "MenuAdmin";
+	    return "redirect:/MenuAdmin";
 	}
 }

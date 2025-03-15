@@ -134,5 +134,11 @@ public class EjemplarController {
 
 		return "verMensajesEjemplar";
 	}
+	
+	@GetMapping("/GestionStock")
+	public String gestionStockEjemplares(@RequestParam(required = false) String codigo, Model model) {
+		
+		return "GestionStock";
+	}
 
 }

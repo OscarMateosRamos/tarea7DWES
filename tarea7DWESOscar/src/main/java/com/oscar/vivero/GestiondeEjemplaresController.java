@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class GestiondeEjemplaresController {
-	@GetMapping({ "/MenuAdmin", "GestiondeEjemplares" })
+	@GetMapping({ "GestiondeEjemplares" })
 	public String GestiondeEjemplares() {
 		return "GestiondeEjemplares";
 
@@ -14,6 +14,6 @@ public class GestiondeEjemplaresController {
 
 	@GetMapping("/GestionEjemplaresMenuAdmin")
 	public String mostrarMenuAdminEjemplares() {
-		return "/MenuAdmin";
+		return "redirect:/MenuAdmin";
 	}
 }

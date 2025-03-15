@@ -1,37 +1,25 @@
 package com.oscar.vivero.modelo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CestaCompra {
 
-	private List<Pedido> pedidos;
+    private Map<Planta, Integer> productos; 
 
-	public CestaCompra() {
-		this.pedidos = new ArrayList<>();
-	}
+    public CestaCompra() {
+        this.productos = new HashMap<>();
+    }
 
-	public void agregarPedido(Pedido p) {
-		this.pedidos.add(p);
-	}
+       public void retirarPlanta(Planta planta) {
+        productos.remove(planta);
+    }
 
-	public void retirarPedido(Long pedidoId) {
-		this.pedidos.removeIf(pedido -> pedido.getId().equals(pedidoId));
-	}
+    public Map<Planta, Integer> obtenerProductos() {
+        return productos;
+    }
 
-	public List<Pedido> obtenerPedidos() {
-		return pedidos;
-	}
-
-	public int obtenerCantidadTotal() {
-		int total = 0;
-
-		for (Pedido pedido : pedidos) {
-			total += pedido.getEjemplares().size();
-		}
-
-		return total;
-
-	}
-
+    public int obtenerCantidadTotal() {
+        return productos.values().stream().mapToInt(Integer::intValue).sum();
+    }
 }

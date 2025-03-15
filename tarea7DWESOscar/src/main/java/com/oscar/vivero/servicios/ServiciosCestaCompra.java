@@ -1,52 +1,39 @@
 package com.oscar.vivero.servicios;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.oscar.vivero.modelo.CestaCompra;
-import com.oscar.vivero.modelo.Pedido;
+import com.oscar.vivero.modelo.Planta;
 
 @Service
 public class ServiciosCestaCompra {
 
-	private static final List<Pedido> pedidos = null;
-	private CestaCompra cestaCompra = new CestaCompra();
+    private Map<Planta, Integer> productos;
 
-	public boolean agregarPedidoAlCarrito(Pedido pedido) {
-		if (pedido != null) {
-			cestaCompra.agregarPedido(pedido);
-			return true;
-		}
-		return false;
-	}
+    public ServiciosCestaCompra() {
+        this.productos = new HashMap<>();
+    }
 
-	public boolean añadirPedidoACesta(Pedido pedido) {
-        if (pedido != null) {
-            cestaCompra.agregarPedido(pedido);
-            return true; 
+    public void agregarPlanta(Planta planta, int cantidad) {
+        if (cantidad <= 0) {
+            return;
         }
-        return false; 
+
+        // Agregar o actualizar la cantidad de la planta en la cesta
+        productos.put(planta, productos.getOrDefault(planta, 0) + cantidad);
+
+        // Reducir la cantidad disponible en la planta
+        int nuevaCantidadDisponible = (int) (planta.getCantidadDisponible() - cantidad);
+        planta.setCantidadDisponible(Math.max(nuevaCantidadDisponible, 0));
     }
 
-	public List<Pedido> obtenerPedidosEnCesta() {
-        return this.pedidos;  
-    }
-	
-	public int obtenerCantidadTotal() {
-        int total = 0;
-        for (Pedido pedido : pedidos) {
-            total += pedido.getEjemplares().size();
-        }
-        return total;
+    public void retirarProductoDeCesta(Planta planta) {
+        productos.remove(planta); // Se corrige para eliminar correctamente
     }
 
-    public void vaciarCesta() {
-        this.pedidos.clear();
+    public Map<Planta, Integer> obtenerProductosCesta() {
+        return productos;
     }
-
-    public boolean estaVacia() {
-        return this.pedidos.isEmpty();
-    }
-	
 }
