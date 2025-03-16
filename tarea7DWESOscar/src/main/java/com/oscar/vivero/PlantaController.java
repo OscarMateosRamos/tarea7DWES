@@ -19,11 +19,26 @@ public class PlantaController {
 	@Autowired
 	ServiciosPlanta servPlanta;
 
-	@GetMapping("/plantas")
-	public String listarPlantas(Model model) {
+	@GetMapping("/plantasAdmin")
+	public String listarPlantasAd(Model model) {
+		List<Planta> p = servPlanta.vertodasPlantas();
+		model.addAttribute("plantas", p);
+		return "/admin/listadodePlantasAdmin";
+	}
+	
+	@GetMapping("/plantasInvitado")
+	public String listarPlantasInv(Model model) {
 		List<Planta> p = servPlanta.vertodasPlantas();
 		model.addAttribute("plantas", p);
 		return "listadodePlantas";
+	}
+	
+	
+	@GetMapping("/plantasPersonal")
+	public String listarPlantasPer(Model model) {
+		List<Planta> p = servPlanta.vertodasPlantas();
+		model.addAttribute("plantas", p);
+		return "listadodePlantasPersonal";
 	}
 
 	@PostMapping("/CamposPlanta")

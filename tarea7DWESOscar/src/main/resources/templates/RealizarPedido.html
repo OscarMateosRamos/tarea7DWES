@@ -1,74 +1,48 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Realizar Pedido</title>
-<link rel="stylesheet" th:href="@{/CSS/estilosRealizarPedido.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="./CSS/RealizarPedido.css">
+    <title>Realizar Pedido</title>
 </head>
 <body>
-	<header>
-		<h1>Realizar Pedido</h1>
-	</header>
 
-	<div class="container">
+    <h1>Realizar Pedido</h1>
 
-		<div th:if="${mensajeExito}" class="alert success">
-			<p th:text="${mensajeExito}"></p>
-		</div>
-		<div th:if="${mensajeError}" class="alert error">
-			<p th:text="${mensajeError}"></p>
-		</div>
-
-		<form th:action="@{/CamposPedido}" th:object="${pedido}" method="POST">
-			<table>
-				<thead>
-					<tr>
-						<th>Planta</th>
-						<th>Ejemplar</th>
-						<th>Cantidad Disponible</th>
-						<th>Cantidad a Pedir</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="planta : ${plantas}">
-
-						<td th:text="${planta.nombrecomun}"></td>
-
-						<td>
-							<div th:each="ejemplar : ${planta.ejemplares}">
-
-								<label th:for="'cantidades-' + ${ejemplar.id}">Ejemplar:
-									${ejemplar.nombre} - Código: ${ejemplar.id}</label>
-
-
-								<p
-									th:text="'Cantidad Disponible: ' + ${ejemplar.cantidadDisponible}"></p>
-
-
-								<select th:field="*{cantidades[${ejemplar.id}]}">
-									<option
-										th:each="i : ${#numbers.sequence(1, ejemplar.cantidadDisponible)}"
-										th:value="${i}" th:text="${i}"></option>
-								</select>
-							</div>
-						</td>
-
-
-						<td th:text="${planta.ejemplares.size()}"></td>
-					</tr>
-				</tbody>
-			</table>
-
-			<div>
-				<button type="submit">Realizar Pedido</button>
-			</div>
-		</form>
-
-		<div>
-			<a href="/MenuInvitado">Menú Invitado</a>
-		</div>
-	</div>
+    
+  
+    <table>
+        <thead>
+            <tr>
+                <th>Planta</th>
+                <th>Cantidad Disponible</th>
+                <th>Cantidad a Comprar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="planta : ${plantas}">
+                <td th:text="${planta.nombrecomun}"></td>
+                <td th:text="${planta.cantidadDisponible}"></td>
+                <td>
+                    <form th:action="@{/añadirACesta}" method="POST">
+                        <input type="hidden" name="codigo" th:value="${planta.codigo}"/>
+                        <input type="number" name="cantidad" min="0" th:max="${planta.cantidadDisponible}" step="1" value="0"/>
+                        <button type="submit">Añadir a la Cesta</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+	
+    <div>
+        <a href="/MenuInvitado">Volver al menú</a>
+    </div>
+    
+    <div>
+    	 <a href="/CestaCompra">Ir a la Cesta</a>
+    </div>
+   
 
 </body>
 </html>

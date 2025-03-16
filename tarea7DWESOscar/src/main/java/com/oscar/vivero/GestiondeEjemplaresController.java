@@ -12,7 +12,7 @@ public class GestiondeEjemplaresController {
 
 	}
 
-	@GetMapping("/GestionEjemplaresMenuAdmin")
+	@GetMapping("/GestiondeEjemplaresMenuAdmin")
 	public String mostrarMenuAdminEjemplares() {
 		return "redirect:/MenuAdmin";
 	}

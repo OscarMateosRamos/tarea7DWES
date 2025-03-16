@@ -134,10 +134,11 @@ public class EjemplarController {
 
 		return "verMensajesEjemplar";
 	}
-	
+
 	@GetMapping("/GestionStock")
-	public String gestionStockEjemplares(@RequestParam(required = false) String codigo, Model model) {
-		
+	public String gestionStockEjemplares(Model model) {
+		List<Planta> plantas = servPlanta.vertodasPlantas(); // Método que devuelve todas las plantas
+		model.addAttribute("plantas", plantas);
 		return "GestionStock";
 	}
 

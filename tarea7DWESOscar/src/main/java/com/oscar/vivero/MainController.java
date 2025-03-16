@@ -84,15 +84,16 @@ public class MainController {
 	        System.out.println("--Bienvenido Cliente--");
 	        return "redirect:/RealizarPedido"; 
 	    }
-
+	    
 	    System.out.println("--Rol no reconocido--");
+	    
 	    return "formularioLogIn";  
 	}
 
 
-	@GetMapping("/CerrarSesion")
+	@GetMapping("/logout")
 	public String cerrarSesion(HttpSession session) {
 		session.invalidate();
-		return "/MostrarSesion";
+		return "redirect:/MenuInvitado";
 	}
 }

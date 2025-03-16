@@ -30,6 +30,8 @@ public interface EjemplarRepository extends JpaRepository<Ejemplar, Long> {
 	List<Ejemplar> findEjemplarById(Long ejemplarId) ;
 
 	List<Ejemplar> findByPlanta(Planta planta);
+
+	long countByPlantaAndDisponible(Planta planta, boolean b);
 	
 	
 }

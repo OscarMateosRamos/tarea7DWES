@@ -109,14 +109,18 @@ public class ServiciosPlanta {
 	public List<Planta> obtenerPlantasConEjemplares() {
 		return plantarepo.obtenerPlantasConEjemplares();
 	}
-	
-	
+
 	public long calcularCantidadDisponible(Planta planta) {
-        
-        return planta.getEjemplares().stream()
-                .filter(Ejemplar::isDisponible) 
-                .count(); 
-    }
+
+		return planta.getEjemplares().stream().filter(Ejemplar::isDisponible).count();
+	}
+
+	public void actualizarCantidadDisponible(Planta planta, int nuevaCantidadDisponible) {
+
+		planta.setCantidadDisponible(nuevaCantidadDisponible);
+
+		plantarepo.save(planta);
+	}
 
 	public List<String> listarTiposDePlanta() {
 		// TODO Auto-generated method stub

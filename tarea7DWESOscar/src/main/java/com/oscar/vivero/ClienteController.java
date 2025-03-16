@@ -24,56 +24,67 @@ public class ClienteController {
 	ServiciosCredenciales servCredenciales;
 
 	@PostMapping("/CamposCliente")
-	public String RegistrarCliente(@ModelAttribute Cliente RegistroCliente, Model model) {
+    public String RegistrarCliente(@ModelAttribute Cliente RegistroCliente, Model model) {
 
-		String nombre = RegistroCliente.getNombre();
-		Date fechanac = RegistroCliente.getFechanac();
-		String nif = RegistroCliente.getNif();
-		String direccion = RegistroCliente.getDireccion();
-		String email = RegistroCliente.getEmail();
-		String telefono = RegistroCliente.getTelefono();
+        // Extraer los campos del cliente del objeto recibido
+        String nombre = RegistroCliente.getNombre();
+        Date fechanac = RegistroCliente.getFechanac();
+        String nif = RegistroCliente.getNif();
+        String direccion = RegistroCliente.getDireccion();
+        String email = RegistroCliente.getEmail();
+        String telefono = RegistroCliente.getTelefono();
 
-		String usuario = RegistroCliente.getCredencial().getUsuario();
-		String password = RegistroCliente.getCredencial().getPassword();
+        // Extraer las credenciales del cliente
+        String usuario = RegistroCliente.getCredencial().getUsuario();
+        String password = RegistroCliente.getCredencial().getPassword();
 
-		Cliente c = new Cliente();
-		c.setNombre(nombre);
-		c.setFechanac(fechanac);
-		c.setNif(nif);
-		c.setDireccion(direccion);
-		c.setEmail(email);
-		c.setTelefono(telefono);
+        // Crear un nuevo objeto Cliente
+        Cliente c = new Cliente();
+        c.setNombre(nombre);
+        c.setFechanac(fechanac);
+        c.setNif(nif);
+        c.setDireccion(direccion);
+        c.setEmail(email);
+        c.setTelefono(telefono);
 
-		Credenciales cr = new Credenciales();
-		cr.setUsuario(usuario);
-		cr.setPassword(password);
-		cr.setRol("cliente");
+        // Crear un objeto Credenciales
+        Credenciales cr = new Credenciales();
+        cr.setUsuario(usuario);
+        cr.setPassword(password);
+        cr.setRol("cliente");  // Se asigna el rol "cliente" a las credenciales
 
-		c.setCredencial(cr);
+        // Asociar las credenciales al cliente
+        c.setCredencial(cr);
 
-		boolean camposValidos = servcliente.validarCliente(nombre, email, nif, telefono, direccion, usuario, password);
+        // Validación de los campos del cliente
+        boolean camposValidos = servcliente.validarCliente(nombre, email, nif, telefono, direccion, usuario, password);
 
-		if (!camposValidos) {
+        
+        if (!camposValidos) {
+            model.addAttribute("mensajeError", "Campos del Cliente inválidos.");
+            model.addAttribute("cliente", RegistroCliente);  
+            return "RegistroCliente";
+        }
 
-			model.addAttribute("mensajeError", "Campos del Cliente inválidos.");
-			model.addAttribute("cliente", RegistroCliente);
-			return "RegistroCliente";
-		}
+      
+        try {
+            servcliente.insertarCliente(c); 
+            servCredenciales.insertarCredencial(cr); 
 
-		try {
-			servcliente.insertarCliente(c);
-			servCredenciales.insertarCredencial(cr);
+      
+            model.addAttribute("mensajeExito", "Cliente añadido correctamente.");
+            model.addAttribute("cliente", new Cliente());  
 
-			model.addAttribute("mensajeExito", "Cliente añadido correctamente.");
-			model.addAttribute("cliente", new Cliente());
-		} catch (Exception e) {
+            return "redirect:/MenuInvitado"; 
+        } catch (Exception e) {
+           
+            model.addAttribute("mensajeError", "Hubo un error al registrar el cliente. Por favor, intente nuevamente.");
+            model.addAttribute("cliente", RegistroCliente); 
+        }
 
-			model.addAttribute("mensajeError", "Hubo un error al registrar el cliente. Por favor, intente nuevamente.");
-			model.addAttribute("cliente", RegistroCliente);
-		}
+        return "RegistroCliente"; 
+    }
 
-		return "RegistroCliente";
-	}
 
 	@GetMapping("/ClienteRegistro")
 	public String mostrarFormularioRegistroCliente(Model model) {

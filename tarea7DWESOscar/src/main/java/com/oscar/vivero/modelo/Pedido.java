@@ -23,140 +23,131 @@ import jakarta.persistence.Table;
 @Table(name = "pedido")
 public class Pedido {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "fecha")
-	private Date fecha;
+    @Column(name = "fecha")
+    private Date fecha;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "cliente_id")
-	private Cliente cliente;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "pedido_id")
-	private List<Ejemplar> ejemplares = new LinkedList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pedido_id")
+    private List<Ejemplar> ejemplares = new LinkedList<>();
 
-	@ElementCollection
-	@MapKeyColumn(name = "ejemplar_id")
-	@Column(name = "cantidad")
-	private Map<String, Integer> cantidades;
+    @ElementCollection
+    @MapKeyColumn(name = "ejemplar_id")
+    @Column(name = "cantidad")
+    private Map<String, Integer> cantidades;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido")
-	private List<Mensaje> anotacion = new LinkedList<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido")
+    private List<Mensaje> anotacion = new LinkedList<>();
 
-	private List<Ejemplar> ejemplaresEnPedido = new LinkedList<>();
-	
-	
-	
-	public Pedido() {
-		super();
-	}
+    // Nuevo campo para el estado del pedido
+    @Column(name = "estado")
+    private String estado;  // "en proceso" o "finalizado"
 
-	public Pedido(Date fecha, Cliente cliente, List<Ejemplar> ejemplares, Map<String, Integer> cantidades,
-			List<Mensaje> anotacion, List<Ejemplar> ejemplaresEnPedido) {
-		super();
-		this.fecha = fecha;
-		this.cliente = cliente;
-		this.ejemplares = ejemplares;
-		this.cantidades = cantidades;
-		this.anotacion = anotacion;
-		this.ejemplaresEnPedido = ejemplaresEnPedido;
-	}
+    public Pedido() {
+        super();
+    }
 
-	public void agregarEjemplar(Ejemplar ejemplar, Integer cantidad) {
-		if (ejemplar == null || cantidad == null || cantidad <= 0) {
-			return;
-		}
+    public Pedido(Long id, Date fecha, Cliente cliente, List<Ejemplar> ejemplares, Map<String, Integer> cantidades,
+                  List<Mensaje> anotacion, String estado) {
+        super();
+        this.id = id;
+        this.fecha = fecha;
+        this.cliente = cliente;
+        this.ejemplares = ejemplares;
+        this.cantidades = cantidades;
+        this.anotacion = anotacion;
+        this.estado = estado;  // Establecer el estado en el constructor
+    }
 
-		for (int i = 0; i < cantidad; i++) {
-			ejemplaresEnPedido.add(ejemplar);
-		}
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Date getFecha() {
+        return fecha;
+    }
 
-	public Date getFecha() {
-		return fecha;
-	}
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
 
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
+    public Cliente getCliente() {
+        return cliente;
+    }
 
-	public Cliente getCliente() {
-		return cliente;
-	}
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
-	}
+    public List<Ejemplar> getEjemplares() {
+        return ejemplares;
+    }
 
-	public List<Ejemplar> getEjemplares() {
-		return ejemplares;
-	}
+    public void setEjemplares(List<Ejemplar> ejemplares) {
+        this.ejemplares = ejemplares;
+    }
 
-	public void setEjemplares(List<Ejemplar> ejemplares) {
-		this.ejemplares = ejemplares;
-	}
+    public Map<String, Integer> getCantidades() {
+        return cantidades;
+    }
 
-	public Map<String, Integer> getCantidades() {
-		return cantidades;
-	}
+    public void setCantidades(Map<String, Integer> cantidades) {
+        this.cantidades = cantidades;
+    }
 
-	public void setCantidades(Map<String, Integer> cantidades) {
-		this.cantidades = cantidades;
-	}
+    public List<Mensaje> getAnotacion() {
+        return anotacion;
+    }
 
-	public List<Mensaje> getAnotacion() {
-		return anotacion;
-	}
+    public void setAnotacion(List<Mensaje> anotacion) {
+        this.anotacion = anotacion;
+    }
 
-	public void setAnotacion(List<Mensaje> anotacion) {
-		this.anotacion = anotacion;
-	}
+    // Getter y Setter para el estado
+    public String getEstado() {
+        return estado;
+    }
 
-	public List<Ejemplar> getEjemplaresEnPedido() {
-		return ejemplaresEnPedido;
-	}
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
-	public void setEjemplaresEnPedido(List<Ejemplar> ejemplaresEnPedido) {
-		this.ejemplaresEnPedido = ejemplaresEnPedido;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(anotacion, cantidades, cliente, ejemplares, fecha, id, estado);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(anotacion, cantidades, cliente, ejemplares, ejemplaresEnPedido, fecha, id);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Pedido other = (Pedido) obj;
+        return Objects.equals(anotacion, other.anotacion) && Objects.equals(cantidades, other.cantidades)
+                && Objects.equals(cliente, other.cliente) && Objects.equals(ejemplares, other.ejemplares)
+                && Objects.equals(fecha, other.fecha) && Objects.equals(id, other.id)
+                && Objects.equals(estado, other.estado);  // Comparar el estado
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Pedido other = (Pedido) obj;
-		return Objects.equals(anotacion, other.anotacion) && Objects.equals(cantidades, other.cantidades)
-				&& Objects.equals(cliente, other.cliente) && Objects.equals(ejemplares, other.ejemplares)
-				&& Objects.equals(ejemplaresEnPedido, other.ejemplaresEnPedido) && Objects.equals(fecha, other.fecha)
-				&& Objects.equals(id, other.id);
-	}
-
-	@Override
-	public String toString() {
-		return "Pedido [id=" + id + ", fecha=" + fecha + ", cliente=" + cliente + ", ejemplares=" + ejemplares
-				+ ", cantidades=" + cantidades + ", anotacion=" + anotacion + ", ejemplaresEnPedido="
-				+ ejemplaresEnPedido + "]";
-	}
+    @Override
+    public String toString() {
+        return "Pedido [id=" + id + ", fecha=" + fecha + ", cliente=" + cliente + ", ejemplares=" + ejemplares
+                + ", cantidades=" + cantidades + ", anotacion=" + anotacion + ", estado=" + estado + "]";
+    }
 }

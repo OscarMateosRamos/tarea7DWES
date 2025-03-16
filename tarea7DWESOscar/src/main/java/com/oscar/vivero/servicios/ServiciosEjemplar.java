@@ -23,7 +23,7 @@ public class ServiciosEjemplar {
 
 	@Autowired
 	EjemplarRepository ejemplarrepo;
-	
+
 	@Autowired
 	PlantaRepository plantarrepo;
 
@@ -32,6 +32,9 @@ public class ServiciosEjemplar {
 
 	@Autowired
 	ServiciosMensaje servMensaje;
+
+	@Autowired
+	ServiciosPlanta servPlanta;
 
 	@Autowired
 	Controlador controlador;
@@ -64,6 +67,11 @@ public class ServiciosEjemplar {
 		m.setEjemplar(ej);
 		m.setFechahora(date);
 		m.setMensaje(mensaje);
+
+		Planta planta = ej.getPlanta();
+		planta.setCantidadDisponible(planta.getCantidadDisponible() + 1);
+		
+		servPlanta.modificarPlanta(planta);
 
 		servMensaje.insertar(m);
 	}
@@ -117,7 +125,7 @@ public class ServiciosEjemplar {
 
 		return null;
 	}
-	 
+
 	public void actualizarEjemplarAlRealizarPedido(Ejemplar ejemplar, String mensaje) {
 		ejemplar.setDisponible(false);
 		ejemplarrepo.save(ejemplar);
@@ -128,7 +136,7 @@ public class ServiciosEjemplar {
 	}
 
 	public List<Ejemplar> obtenerEjemplaresConCantidadDisponible() {
-       
-        return ejemplarrepo.findAll();
-    }
+
+		return ejemplarrepo.findAll();
+	}
 }
