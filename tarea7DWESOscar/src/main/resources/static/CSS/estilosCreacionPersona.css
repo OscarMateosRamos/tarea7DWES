@@ -1,8 +1,10 @@
+
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
 }
+
 
 body {
     font-family: Arial, sans-serif;
@@ -31,11 +33,12 @@ header {
     right: 0;
 }
 
+
 .container {
     text-align: center;
-    margin-top: 120px;
+    margin-top: 150px;  
     width: 50%;
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.85); 
     padding: 30px;
     border-radius: 10px;
     display: flex;
@@ -43,6 +46,31 @@ header {
     align-items: center;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+
+div.mensaje-error {
+    background-color: #f8d7da;  
+    color: #721c24;  
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    display: block;  
+    text-align: center;
+}
+
+
+div.mensaje-exito {
+    background-color: #d4edda; 
+    color: #155724;  
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    display: block;  
+    text-align: center;
+}
+
 
 .formulario {
     display: flex;
@@ -52,6 +80,7 @@ header {
     width: 100%;
 }
 
+
 label {
     font-size: 18px;
     color: #333;
@@ -59,6 +88,7 @@ label {
     text-align: left;
     width: 80%;
 }
+
 
 input[type="text"] {
     width: 80%;
@@ -75,6 +105,7 @@ input[type="text"]:focus {
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
     outline: none;
 }
+
 
 .boton {
     display: inline-block;
@@ -97,6 +128,7 @@ input[type="text"]:focus {
     transform: scale(1.05);
 }
 
+
 .contenedor-boton {
     display: flex;
     justify-content: center;
@@ -105,8 +137,6 @@ input[type="text"]:focus {
     margin-top: 20px;
     gap: 20px;
 }
-
-
 
 @media (max-width: 768px) {
     .container {
