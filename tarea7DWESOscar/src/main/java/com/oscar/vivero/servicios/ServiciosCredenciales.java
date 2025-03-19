@@ -16,12 +16,16 @@ public class ServiciosCredenciales {
 
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // Añadido para cifrado de contraseñas
 
-	public void insertarCredencial(Credenciales c) {
-		// Cifra la contraseña antes de guardarla en la base de datos
-		String encodedPassword = passwordEncoder.encode(c.getPassword());
-		c.setPassword(encodedPassword); // Asignamos la contraseña cifrada
-		credencialrepo.saveAndFlush(c);
-	}
+	 public void insertarCredencial(Credenciales c) {
+	        // Cifra la contraseña antes de guardar
+	        String passwordCifrada = passwordEncoder.encode(c.getPassword());
+	        
+	        // Establece la contraseña cifrada en la credencial
+	        c.setPassword(passwordCifrada);
+
+	        // Guarda la credencial con la contraseña cifrada
+	        credencialrepo.saveAndFlush(c);
+	    }
 
 	public boolean validarUsuarioPassword(Credenciales c) {
 		if (c.getUsuario().isEmpty() || c.getPassword().isEmpty()) {

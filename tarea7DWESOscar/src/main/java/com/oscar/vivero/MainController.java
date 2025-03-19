@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,7 @@ public class MainController {
         return "formularioLogin";
     }
 
+    
     @PostMapping("/Sesion")
     public String logInSubmit(@ModelAttribute Credenciales formularioLogin, Model model, HttpSession session) {
         String usuario = formularioLogin.getUsuario();
@@ -51,19 +53,32 @@ public class MainController {
             return "formularioLogin";
         }
 
+        System.out.println("Usuario recibido: " + usuario);  // Depuración
+        System.out.println("Contraseña recibida: " + password);  // Depuración
+
         // Buscar las credenciales y validar
         Credenciales credencial = servCredenciales.buscarCredencialPorUsuario(usuario);
-        if (credencial == null || !credencial.getPassword().equals(password)) {
+        if (credencial == null) {
             model.addAttribute("error", "Credenciales incorrectas");
             return "formularioLogin";
         }
 
-     
-        SecurityContextHolder.getContext().setAuthentication(((SecurityContext) credencial).getAuthentication());
+        // Usar BCryptPasswordEncoder para comparar la contraseña cifrada
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(password, credencial.getPassword())) {
+            model.addAttribute("error", "Credenciales incorrectas");
+            return "formularioLogin";
+        }
 
         String rol = credencial.getRol();
+        System.out.println("Rol recibido: " + rol);  // Depuración
+
+        // Guardar en la sesión
         session.setAttribute("usuario", usuario);
         session.setAttribute("rol", rol);
+
+        System.out.println("Guardado en la sesión - Usuario: " + usuario);  // Depuración
+        System.out.println("Guardado en la sesión - Rol: " + rol);  // Depuración
 
         // Redirigir según el rol del usuario
         switch (rol.toLowerCase()) {
@@ -83,11 +98,14 @@ public class MainController {
         }
     }
 
+
+    
     @GetMapping("/logout")
     public String cerrarSesion(HttpSession session) {
-        // Limpiar el contexto de seguridad
-        SecurityContextHolder.clearContext();
+        System.out.println("Cerrando sesión...");
         session.invalidate();
+        System.out.println("Sesión invalidada.");
         return "redirect:/MenuInvitado";
     }
+
 }
