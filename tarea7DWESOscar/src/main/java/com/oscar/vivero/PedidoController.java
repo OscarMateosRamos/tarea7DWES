@@ -39,16 +39,16 @@ public class PedidoController {
 
 	@GetMapping("/RealizarPedido")
 	public String mostrarRealizarPedido(Model model) {
-		// Obtener todas las plantas con ejemplares disponibles
+		
 		List<Planta> plantas = servPlanta.obtenerPlantasConEjemplares();
 
-		// Calcular la cantidad disponible de cada planta
+	
 		for (Planta planta : plantas) {
 			long cantidadDisponible = planta.getEjemplares().stream().filter(Ejemplar::isDisponible).count();
 			planta.setCantidadDisponible(cantidadDisponible);
 		}
 
-		// Inicializar el objeto Pedido con un mapa vacío de cantidades
+	
 		Pedido pedido = new Pedido();
 		Map<String, Integer> cantidades = new HashMap<>();
 		for (Planta planta : plantas) {
@@ -56,7 +56,7 @@ public class PedidoController {
 		}
 		pedido.setCantidades(cantidades);
 
-		// Agregar al modelo
+	
 		model.addAttribute("plantas", plantas);
 		model.addAttribute("pedido", pedido);
 
@@ -113,10 +113,9 @@ public class PedidoController {
 	@PostMapping("/añadirACesta")
 	public String añadirACesta(@RequestParam("codigo") String codigo, @RequestParam("cantidad") int cantidad,
 			Model model) {
-		Planta planta = servPlanta.buscarPlantaPorCodigo(codigo);
 
-		if (planta != null && cantidad > 0) {
-			servCesta.agregarPlanta(planta, cantidad);
+		if (codigo != null && cantidad > 0) {
+			servCesta.agregarPlanta(codigo, cantidad);
 
 			model.addAttribute("success", "Producto añadido a la cesta con éxito.");
 		} else {

@@ -13,14 +13,12 @@ public class CestaCompra {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	// Utilizamos un mapa serializado para almacenar el código de la planta y su
-	// cantidad en la misma tabla
+	
 	@ElementCollection
-	@MapKeyColumn(name = "codigo_planta") // Almacenamos el código de la planta como clave
-	@Column(name = "cantidad") // Almacenamos las cantidades de las plantas
+	@MapKeyColumn(name = "codigo_planta")  
+	@Column(name = "cantidad") 
 	@CollectionTable(name = "cesta_compra_productos", joinColumns = @JoinColumn(name = "cesta_id"))
-	private Map<String, Integer> productosEnCesta = new HashMap<>(); // Usamos String como clave para el código de la
-																		// planta
+	private Map<String, Integer> productosEnCesta = new HashMap<>(); 
 
 	public CestaCompra() {
 	}

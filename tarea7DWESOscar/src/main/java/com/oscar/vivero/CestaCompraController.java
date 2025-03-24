@@ -1,71 +1,91 @@
 package com.oscar.vivero;
 
+import java.util.Map;
+
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Pedido;
-import com.oscar.vivero.modelo.Planta;
+import com.oscar.vivero.modelo.Persona;
 import com.oscar.vivero.servicios.ServiciosCestaCompra;
 import com.oscar.vivero.servicios.ServiciosPedido;
 import com.oscar.vivero.servicios.ServiciosPlanta;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 @Controller
 public class CestaCompraController {
-	
-    @Autowired
-    private ServiciosPedido servPedido;
-	
-    @Autowired
-    private ServiciosPlanta servPlanta;
 
-    @Autowired
-    private ServiciosCestaCompra servCesta;
-    
-    @GetMapping("/CestaCompra")
-    public String mostrarCesta(Model model) {
-        model.addAttribute("cesta", servCesta.obtenerProductosCesta());
-        return "CestaCompra"; 
-    }
-    
-    @PostMapping("/eliminarDeCesta")
-    public String eliminarProducto(@RequestParam("plantaId") String plantaId, Model model) {
-        Planta planta = servPlanta.buscarPlantaPorCodigo(plantaId);
-        if (planta != null) {
-            servCesta.retirarProductoDeCesta(planta);
-        }
-        return "redirect:/CestaCompra";
-    }
+	@Autowired
+	private ServiciosPedido servPedido;
 
-   
-    @PostMapping("/vaciarCesta")
-    public String vaciarCesta() {
-        servCesta.vaciarCesta();
-        return "redirect:/CestaCompra";
-    }
+	@Autowired
+	private ServiciosPlanta servPlanta;
 
-   
-    
-    @PostMapping("/confirmarCompra")
-    public String confirmarCompra(HttpSession session, Model model) {
-        CestaCompra cesta = (CestaCompra) servCesta.obtenerProductosCesta();
-        
-        if (cesta.obtenerProductos().isEmpty()) {
-            model.addAttribute("mensajeError", "La cesta está vacía.");
-            return "CestaCompra";
-        }
+	@Autowired
+	private ServiciosCestaCompra servCesta;
 
-        Pedido pedido = servPedido.crearPedidoDesdeCesta(cesta);
-        servPedido.insertarPedido(pedido);
-        servCesta.vaciarCesta();
-        
-        model.addAttribute("mensajeExito", "Pedido realizado con éxito.");
-        return "redirect:/CestaCompra";
-    }
+	@GetMapping("/CestaCompra")
+	public String mostrarCesta(Model model) {
+
+		Long usuarioId = obtenerUsuarioId();
+
+		Map<String, Integer> productosEnCesta = servCesta.obtenerProductosCesta(usuarioId);
+
+		if (productosEnCesta == null || productosEnCesta.isEmpty()) {
+			model.addAttribute("mensaje", "Tu cesta está vacía.");
+		} else {
+			model.addAttribute("productosEnCesta", productosEnCesta);
+		}
+
+		return "CestaCompra";
+	}
+
+	public Long obtenerUsuarioId() {
+
+		org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
+
+		if (authentication != null && authentication.isAuthenticated()) {
+
+			Object principal = authentication.getPrincipal();
+
+			if (principal instanceof UserDetails) {
+				UserDetails userDetails = (UserDetails) principal;
+
+				if (userDetails instanceof Persona) {
+					Persona persona = (Persona) userDetails;
+
+					Long userId = persona.getId();
+					return userId;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	@PostMapping("/vaciarCesta")
+	public String vaciarCesta() {
+		servCesta.vaciarCesta();
+		return "redirect:/CestaCompra";
+	}
+
+	@Transactional
+	public CestaCompra obtenerCesta(Long id) {
+		CestaCompra cesta = new CestaCompra();
+		if (cesta != null) {
+			Hibernate.initialize(cesta.getProductos());
+		}
+		return cesta;
+	}
+
 }
