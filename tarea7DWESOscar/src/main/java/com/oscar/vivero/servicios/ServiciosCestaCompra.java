@@ -76,13 +76,14 @@ public class ServiciosCestaCompra {
 			cestaCompraRepository.save(cesta);
 		}
 	}
-	
-
-	public Map<String, Integer> obtenerProductosCesta() {
-		CestaCompra cesta = cestaCompraRepository.findById(1L).orElse(null);
-		return cesta != null ? cesta.getProductos() : null;
+	public Map<String, Integer> obtenerProductosCesta(Long usuarioId) {
+	    // Obtener la cesta asociada al usuario autenticado
+	    CestaCompra cesta = cestaCompraRepository.findByUsuarioId(usuarioId).orElse(null);
+	    
+	    // Si la cesta existe, devolver los productos, sino devolver null
+	    return cesta != null ? cesta.getProductos() : null;
 	}
-	
+
 
 	public void vaciarCesta() {
 		CestaCompra cesta = cestaCompraRepository.findById(1L).orElse(null);

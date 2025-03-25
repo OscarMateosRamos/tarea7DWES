@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.oscar.vivero.modelo.CestaCompra;
-import com.oscar.vivero.modelo.Pedido;
 import com.oscar.vivero.modelo.Persona;
 import com.oscar.vivero.servicios.ServiciosCestaCompra;
 import com.oscar.vivero.servicios.ServiciosPedido;
@@ -36,9 +35,7 @@ public class CestaCompraController {
 	@GetMapping("/CestaCompra")
 	public String mostrarCesta(Model model) {
 
-		Long usuarioId = obtenerUsuarioId();
-
-		Map<String, Integer> productosEnCesta = servCesta.obtenerProductosCesta(usuarioId);
+		Map<String, Integer> productosEnCesta =  servCesta.obtenerProductosCesta(null);
 
 		if (productosEnCesta == null || productosEnCesta.isEmpty()) {
 			model.addAttribute("mensaje", "Tu cesta está vacía.");
@@ -49,30 +46,7 @@ public class CestaCompraController {
 		return "CestaCompra";
 	}
 
-	public Long obtenerUsuarioId() {
-
-		org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-
-		if (authentication != null && authentication.isAuthenticated()) {
-
-			Object principal = authentication.getPrincipal();
-
-			if (principal instanceof UserDetails) {
-				UserDetails userDetails = (UserDetails) principal;
-
-				if (userDetails instanceof Persona) {
-					Persona persona = (Persona) userDetails;
-
-					Long userId = persona.getId();
-					return userId;
-				}
-			}
-		}
-
-		return null;
-	}
-
+	
 	@PostMapping("/vaciarCesta")
 	public String vaciarCesta() {
 		servCesta.vaciarCesta();

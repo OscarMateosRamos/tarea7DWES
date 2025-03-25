@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Entity
+
 @Table(name = "cesta_compra")
 public class CestaCompra {
 
