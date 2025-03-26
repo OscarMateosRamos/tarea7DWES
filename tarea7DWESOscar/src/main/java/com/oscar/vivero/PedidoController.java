@@ -1,28 +1,27 @@
 package com.oscar.vivero;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Ejemplar;
-import com.oscar.vivero.modelo.Mensaje;
-import com.oscar.vivero.modelo.Pedido;
 import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.servicios.ServiciosCestaCompra;
 import com.oscar.vivero.servicios.ServiciosEjemplar;
 import com.oscar.vivero.servicios.ServiciosPedido;
 import com.oscar.vivero.servicios.ServiciosPlanta;
+
+import jakarta.servlet.http.HttpSession;
 
 @SessionAttributes("cestaCompra")
 @Controller
@@ -51,14 +50,6 @@ public class PedidoController {
 		}
 
 		CestaCompra cestaCompra = new CestaCompra();
-
-		Map<String, Integer> productosEnCesta = new HashMap<>();
-		for (Planta planta : plantas) {
-			productosEnCesta.put(planta.getCodigo(), 0);
-		}
-
-		model.addAttribute("productosEnCesta", productosEnCesta);
-
 		model.addAttribute("plantas", plantas);
 		model.addAttribute("pedido", cestaCompra);
 
@@ -112,24 +103,50 @@ public class PedidoController {
 
 	@PostMapping("/añadirACesta")
 	public String añadirACesta(@RequestParam("codigo") String codigo, @RequestParam("cantidad") int cantidad,
-			Model model) {
+			HttpSession session, Model model) {
 
-		if (codigo != null && cantidad > 0) {
-			CestaCompra cestaCompra = (CestaCompra) model.getAttribute("cestaCompra");
+		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+		CestaCompra c = new CestaCompra();
+		boolean existe = false;
 
-			if (cestaCompra != null) {
+		if (codigo != null && !codigo.isEmpty() && cantidad > 0) {
 
-				cestaCompra.agregarPlanta(codigo, cantidad);
+			int i = 0;
+			int nuevaCantidad = 0;
+			for (CestaCompra l : lista) {
 
-				model.addAttribute("success", "Producto añadido a la cesta con éxito.");
-			} else {
-				model.addAttribute("error", "No se encontró la cesta.");
+				if (l.getCodigoPlanta().equals(codigo)) {
+					existe = true;
+
+					nuevaCantidad = l.getCantidad() + cantidad;
+
+				} else {
+					i = i++;
+
+				}
 			}
+
+			if (!existe) {
+
+				c.setCodigoPlanta(codigo);
+				c.setCantidad(cantidad);
+
+			} else {
+
+				lista.remove(i);
+				c.setCodigoPlanta(codigo);
+				c.setCantidad(nuevaCantidad);
+			}
+
+			lista.add(c);
+			session.setAttribute("lista", lista);
+
+			model.addAttribute("success", "Producto añadido a la cesta con éxito.");
 		} else {
 			model.addAttribute("error", "Error al añadir a la cesta.");
 		}
 
-		return "redirect:/RealizarPedido";
-	}
+		return "/RealizarPedido";
 
+	}
 }

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.springframework.web.bind.annotation.SessionAttributes;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,76 +13,87 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "pedido")
+@Table(name = "pedidos")
 public class Pedido {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "fecha")
-    private Date fecha;
+	@Column(name = "fecha")
+	private Date fecha;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "cliente_id")
+	private Cliente cliente;
 
-   
-    @Column(name = "estado")
-    private String estado;  
+	@OneToMany
+	@JoinColumn(name = "ejemplar")
+	private List<Ejemplar> ejemplares;
 
-    public Pedido() {
-        super();
-    }
+	@Column(name = "estado")
+	private String estado;
 
-    public Pedido(Long id, Date fecha, Cliente cliente, List<Ejemplar> ejemplares, Map<String, Integer> cantidades,
-                  List<Mensaje> anotacion, String estado) {
-        super();
-        this.id = id;
-        this.fecha = fecha;
-        this.cliente = cliente;
-        this.estado = estado;  
-    }
+	public Pedido() {
+		super();
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Pedido(Long id, Date fecha, Cliente cliente, List<Ejemplar> ejemplares, Map<String, Integer> cantidades,
+			List<Mensaje> anotacion, String estado) {
+		super();
+		this.id = id;
+		this.fecha = fecha;
+		this.cliente = cliente;
+		this.estado = estado;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Date getFecha() {
-        return fecha;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
+	public Date getFecha() {
+		return fecha;
+	}
 
-    public Cliente getCliente() {
-        return cliente;
-    }
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
+	public Cliente getCliente() {
+		return cliente;
+	}
 
-    
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
 
-    
-    public String getEstado() {
-        return estado;
-    }
+	public List<Ejemplar> getEjemplares() {
+		return ejemplares;
+	}
+	
+	
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
+	public void setEjemplares(List<Ejemplar> ejemplares) {
+		this.ejemplares = ejemplares;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
 
 	@Override
 	public int hashCode() {
@@ -109,6 +118,4 @@ public class Pedido {
 		return "Pedido [id=" + id + ", fecha=" + fecha + ", cliente=" + cliente + ", estado=" + estado + "]";
 	}
 
-   
-    
 }

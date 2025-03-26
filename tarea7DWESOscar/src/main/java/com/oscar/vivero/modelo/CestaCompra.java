@@ -1,33 +1,33 @@
 package com.oscar.vivero.modelo;
 
-import jakarta.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+@Entity
 @Table(name = "cesta_compra")
-public class CestaCompra {
+public class CestaCompra implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	
-	@ElementCollection
-	@MapKeyColumn(name = "codigo_planta")  
-	@Column(name = "cantidad") 
-	@CollectionTable(name = "cesta_compra_productos", joinColumns = @JoinColumn(name = "cesta_id"))
-	private Map<String, Integer> productosEnCesta = new HashMap<>(); 
+	@Column(name = "CodigoPlanta")
+	private String codigoPlanta;
+
+	@Column(name = "cantidad")
+	private int cantidad;
+
+	@Column(name = "usuario")
+	private String usuario;
 
 	public CestaCompra() {
-	}
-
-	public CestaCompra(Long id, Map<String, Integer> productosEnCesta) {
-		super();
-		this.id = id;
-		this.productosEnCesta = productosEnCesta;
 	}
 
 	public Long getId() {
@@ -38,45 +38,52 @@ public class CestaCompra {
 		this.id = id;
 	}
 
-	public Map<String, Integer> getProductos() {
-		return productosEnCesta;
+	public String getCodigoPlanta() {
+		return codigoPlanta;
 	}
 
-	public void setProductos(Map<String, Integer> productos) {
-		this.productosEnCesta = productos;
+	public void setCodigoPlanta(String codigoPlanta) {
+		this.codigoPlanta = codigoPlanta;
 	}
 
-	public void agregarPlanta(String codigoPlanta, int cantidad) {
-	   
-	    productosEnCesta.merge(codigoPlanta, cantidad, Integer::sum);
+	public int getCantidad() {
+		return cantidad;
 	}
 
-	public void retirarPlanta(String codigoPlanta) {
-	   
-	    productosEnCesta.remove(codigoPlanta);
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
 	}
 
-	public void vaciarCesta() {
-		productosEnCesta.clear();
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, productosEnCesta);
+		return Objects.hash(cantidad, codigoPlanta, id, usuario);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null || getClass() != obj.getClass())
+		if (obj == null)
 			return false;
-		CestaCompra that = (CestaCompra) obj;
-		return Objects.equals(id, that.id) && Objects.equals(productosEnCesta, that.productosEnCesta);
+		if (getClass() != obj.getClass())
+			return false;
+		CestaCompra other = (CestaCompra) obj;
+		return cantidad == other.cantidad && Objects.equals(codigoPlanta, other.codigoPlanta)
+				&& Objects.equals(id, other.id) && Objects.equals(usuario, other.usuario);
 	}
 
 	@Override
 	public String toString() {
-		return "CestaCompra{id=" + id + ", productos=" + productosEnCesta + "}";
+		return "CestaCompra [id=" + id + ", codigoPlanta=" + codigoPlanta + ", cantidad=" + cantidad + ", usuario="
+				+ usuario + "]";
 	}
+
 }

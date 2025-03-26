@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="stylesheet" href="./CSS/RealizarPedido.css">
+    <link rel="stylesheet" href="./CSS/RealizarPedido.css">
     <title>Realizar Pedido</title>
 </head>
 <body>
 
     <h1>Realizar Pedido</h1>
 
+    <div th:if="${success}">
+        <p>Producto añadido con éxito a la cesta.</p>
+    </div>
+    <div th:if="${error}">
+        <p>Error al añadir el producto a la cesta.</p>
+    </div>
     
-  
     <table>
         <thead>
             <tr>
@@ -27,22 +32,22 @@
                 <td>
                     <form th:action="@{/añadirACesta}" method="POST">
                         <input type="hidden" name="codigo" th:value="${planta.codigo}"/>
-                        <input type="number" name="cantidad" min="0" th:max="${planta.cantidadDisponible}" step="1" value="0"/>
+                        <label for="cantidad">Cantidad a Comprar</label>
+                        <input type="number" name="cantidad" min="0" th:max="${planta.cantidadDisponible}" step="1" value="0" id="cantidad" />
                         <button type="submit">Añadir a la Cesta</button>
                     </form>
                 </td>
             </tr>
         </tbody>
     </table>
-	
+    
     <div>
         <a href="/MenuInvitado">Volver al menú</a>
     </div>
     
     <div>
-    	 <a href="/CestaCompra">Ir a la Cesta</a>
+        <a href="/CestaCompra">Ir a la Cesta</a>
     </div>
-   
 
 </body>
 </html>

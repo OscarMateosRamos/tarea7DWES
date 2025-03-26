@@ -15,22 +15,13 @@
 	<div class="container">
 
 
-		<div th:if="${success}" class="alert alert-success">
-			<p th:text="${success}"></p>
-		</div>
-		<div th:if="${error}" class="alert alert-danger">
-			<p th:text="${error}"></p>
+		<div th:if="${mensaje}">
+			<p th:text="${mensaje}"></p>
 		</div>
 
 
-		<div
-			th:if="${productosEnCesta == null or #lists.isEmpty(productosEnCesta)}">
-			<p>Tu cesta está vacía.</p>
-		</div>
 
-
-		<div
-			th:unless="${productosEnCesta == null or #lists.isEmpty(productosEnCesta)}">
+		<div th:unless="${lista == null or lista.isEmpty()}">
 			<table>
 				<thead>
 					<tr>
@@ -40,20 +31,32 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="pedido : ${productosEnCesta}">
-						<td th:text="${pedido.planta.nombrecomun}"></td>
-						<td th:text="${pedido.cantidad}"></td>
+					<tr th:each="item : ${lista}">
+						<td th:text="${item.codigoPlanta}"></td>
+						<td th:text="${item.cantidad}"></td>
 						<td><a
-							th:href="@{/retirarDeCesta/{pedidoId}(idPedido=${pedido.id})}"
+							th:href="@{/retirarDeCesta/{id}(id=${item.codigoPlanta})}"
 							class="boton">Retirar</a></td>
 					</tr>
 				</tbody>
 			</table>
 
+
 			<div class="boton-container">
-				<a href="/Pagar" class="boton">Confirmar Pedido</a>
+				<a href="/ConfirmarPedido" class="boton">Confirmar Pedido</a>
 			</div>
 		</div>
+
+		<div class="boton-container">
+			<a href="/RealizarPedido" class="boton">Seguir Comprando</a>
+		</div>
+
+
+
+		<div th:if="${lista == null or lista.isEmpty()}">
+			<p>No tienes productos en la cesta. ¡Añade algo!</p>
+		</div>
+
 	</div>
 </body>
 </html>

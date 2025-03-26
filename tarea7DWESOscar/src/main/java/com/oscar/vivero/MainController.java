@@ -1,9 +1,8 @@
 package com.oscar.vivero;
 
-import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,101 +10,99 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Credenciales;
 import com.oscar.vivero.servicios.ServiciosCredenciales;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MainController {
 
-    @Autowired
-    ServiciosCredenciales servCredenciales;
+	@Autowired
+	ServiciosCredenciales servCredenciales;
 
-    @GetMapping({ "/", "MenuInvitado" })
-    public String MenuInvitado() {
-        return "MenuInvitado";
-    }
+	@GetMapping({ "/", "MenuInvitado" })
+	public String MenuInvitado() {
+		return "MenuInvitado";
+	}
 
-    @GetMapping("/MenuPersonal")
-    public String mostrarMenuPersonal() {
-        return "MenuPersonal";
-    }
+	@GetMapping("/MenuPersonal")
+	public String mostrarMenuPersonal() {
+		return "MenuPersonal";
+	}
 
-    @GetMapping("/MenuAdmin")
-    public String mostrarMenuAdmin() {
-        return "MenuAdmin";
-    }
+	@GetMapping("/MenuAdmin")
+	public String mostrarMenuAdmin() {
+		return "MenuAdmin";
+	}
 
-    @GetMapping("/login")
-    public String login(Model model) {
-        model.addAttribute("credenciales", new Credenciales());
-        return "formularioLogin";
-    }
+	@GetMapping("/login")
+	public String login(Model model) {
+		model.addAttribute("credenciales", new Credenciales());
+		return "formularioLogin";
+	}
 
-    
-    @PostMapping("/Sesion")
-    public String logInSubmit(@ModelAttribute Credenciales formularioLogin, Model model, HttpSession session) {
-        String usuario = formularioLogin.getUsuario();
-        String password = formularioLogin.getPassword();
+	@PostMapping("/Sesion")
+	public String logInSubmit(@ModelAttribute Credenciales formularioLogin, Model model, HttpSession session) {
+		String usuario = formularioLogin.getUsuario();
+		String password = formularioLogin.getPassword();
 
-        // Validar que los campos no estén vacíos
-        if (usuario == null || password == null || usuario.trim().isEmpty() || password.trim().isEmpty()) {
-            model.addAttribute("error", "Por favor, ingrese ambos campos.");
-            return "formularioLogin";
-        }
+		if (usuario == null || password == null || usuario.trim().isEmpty() || password.trim().isEmpty()) {
+			model.addAttribute("error", "Por favor, ingrese ambos campos.");
+			return "formularioLogin";
+		}
 
-        System.out.println("Usuario recibido: " + usuario);  // Depuración
-        System.out.println("Contraseña recibida: " + password);  // Depuración
+		System.out.println("Usuario recibido: " + usuario);
+		System.out.println("Contraseña recibida: " + password);
 
-        // Buscar las credenciales y validar
-        Credenciales credencial = servCredenciales.buscarCredencialPorUsuario(usuario);
-        if (credencial == null) {
-            model.addAttribute("error", "Credenciales incorrectas");
-            return "formularioLogin";
-        }
+		Credenciales credencial = servCredenciales.buscarCredencialPorUsuario(usuario);
+		if (credencial == null) {
+			model.addAttribute("error", "Credenciales incorrectas");
+			return "formularioLogin";
+		}
 
-        // Usar BCryptPasswordEncoder para comparar la contraseña cifrada
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (!passwordEncoder.matches(password, credencial.getPassword())) {
-            model.addAttribute("error", "Credenciales incorrectas");
-            return "formularioLogin";
-        }
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		if (!passwordEncoder.matches(password, credencial.getPassword())) {
+			model.addAttribute("error", "Credenciales incorrectas");
+			return "formularioLogin";
+		}
 
-        String rol = credencial.getRol();
-        System.out.println("Rol recibido: " + rol);  // Depuración
+		ArrayList<CestaCompra> lista = new ArrayList<CestaCompra>();
 
-        // Guardar en la sesión
-        session.setAttribute("usuario", usuario);
-        session.setAttribute("rol", rol);
+		String rol = credencial.getRol();
+		System.out.println("Rol recibido: " + rol);
 
-        System.out.println("Guardado en la sesión - Usuario: " + usuario);  // Depuración
-        System.out.println("Guardado en la sesión - Rol: " + rol);  // Depuración
+		session.setAttribute("usuario", usuario);
+		session.setAttribute("rol", rol);
+		session.setAttribute("lista", lista);
 
-        // Redirigir según el rol del usuario
-        switch (rol.toLowerCase()) {
-            case "admin":
-                System.out.println("--Bienvenido Admin--");
-                return "redirect:/MenuAdmin";
-            case "personal":
-                System.out.println("--Bienvenido Personal--");
-                return "redirect:/MenuPersonal";
-            case "cliente":
-                System.out.println("--Bienvenido Cliente--");
-                return "redirect:/RealizarPedido";
-            default:
-                System.out.println("--Rol no reconocido--");
-                model.addAttribute("error", "Rol no reconocido.");
-                return "formularioLogin";
-        }
-    }
+		System.out.println("Guardado en la sesión - Usuario: " + usuario);
+		System.out.println("Guardado en la sesión - Rol: " + rol);
 
+		switch (rol.toLowerCase()) {
+		case "admin":
+			System.out.println("--Bienvenido Admin--");
+			return "redirect:/MenuAdmin";
+		case "personal":
+			System.out.println("--Bienvenido Personal--");
+			return "redirect:/MenuPersonal";
+		case "cliente":
+			System.out.println("--Bienvenido Cliente--");
+			return "redirect:/RealizarPedido";
+		default:
+			System.out.println("--Rol no reconocido--");
+			model.addAttribute("error", "Rol no reconocido.");
+			return "formularioLogin";
+		}
+	}
 
-    
-    @GetMapping("/logout")
-    public String cerrarSesion(HttpSession session) {
-        System.out.println("Cerrando sesión...");
-        session.invalidate();
-        System.out.println("Sesión invalidada.");
-        return "redirect:/MenuInvitado";
-    }
+	@GetMapping("/logout")
+	public String cerrarSesion(HttpSession session) {
+		System.out.println("Cerrando sesión...");
+		session.invalidate();
+		System.out.println("Sesión invalidada.");
+		return "redirect:/MenuInvitado";
+	}
 
 }

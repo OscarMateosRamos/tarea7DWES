@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.oscar.vivero.modelo.Ejemplar;
+import com.oscar.vivero.modelo.Mensaje;
 import com.oscar.vivero.modelo.Pedido;
 import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.repositories.PedidoRepository;
@@ -72,6 +73,10 @@ public class ServiciosPedido {
 
 	public List<Ejemplar> getEjemplaresEnPedido() {
 		return ejemplaresEnPedido;
+	}
+
+	public void insertar(Pedido p) {
+		pedidorepo.saveAndFlush(p);
 	}
 
 }
