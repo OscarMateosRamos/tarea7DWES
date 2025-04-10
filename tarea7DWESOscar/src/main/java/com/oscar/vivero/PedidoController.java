@@ -101,61 +101,46 @@ public class PedidoController {
 
 	@PostMapping("/añadirACesta")
 	public String añadirACesta(@RequestParam("codigo") String codigo, @RequestParam("cantidad") int cantidad,
-	                            HttpSession session, Model model) {
+			HttpSession session, Model model) {
 
-	  
-	    ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
 
-	  
-	    if (lista == null) {
-	        lista = new ArrayList<>();
-	    }
+		if (lista == null) {
+			lista = new ArrayList<>();
+		}
 
-	    
-	   
-	    String usuario = (String) session.getAttribute("usuario");
+		String usuario = (String) session.getAttribute("usuario");
 
-	    if (usuario == null) {
-	        model.addAttribute("error", "Debes estar autenticado para añadir productos a la cesta.");
-	        return "login"; 
-	    }
+		if (usuario == null) {
+			model.addAttribute("error", "Debes estar autenticado para añadir productos a la cesta.");
+			return "login";
+		}
 
-	   
-	    CestaCompra c = new CestaCompra();
-	    c.setCodigoPlanta(codigo); 
-	    c.setCantidad(cantidad);   
-	   
-	    c.setUsuario(usuario); 
+		boolean existe = false;
 
-	   
-	    boolean existe = false;
-	    for (CestaCompra item : lista) {
-	        if (item.getCodigoPlanta().equals(codigo)) {
-	            existe = true;
-	            item.setCantidad(item.getCantidad() + cantidad); 
-	            break;
-	        }
-	    }
+		for (CestaCompra item : lista) {
+			if (item.getCodigoPlanta().equals(codigo)) {
+				existe = true;
+				item.setCantidad(item.getCantidad() + cantidad);
+				servCesta.actualizarCesta(item);
+				break;
+			}
+		}
 
-	   
-	    if (!existe) {
-	        lista.add(c);
-	       
-	        servCesta.insertarCesta(c); 
-	    } else {
-	        
-//	        servCesta.actualizarCesta(c); 
-	    }
+		if (!existe) {
+			CestaCompra c = new CestaCompra();
+			c.setCodigoPlanta(codigo);
+			c.setUsuario(usuario);
+			c.setCantidad(cantidad);
+			lista.add(c);
+			servCesta.insertarCesta(c);
 
-	 
-	    session.setAttribute("lista", lista);
+		}
 
-	   
-	    model.addAttribute("success", "Producto añadido a la cesta con éxito.");
+		session.setAttribute("lista", lista);
+		model.addAttribute("success", "Producto añadido a la cesta con éxito.");
 
-	  
-	    return "redirect:/CestaCompra";
+		return "redirect:/CestaCompra";
 	}
-
 
 }

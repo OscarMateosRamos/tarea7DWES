@@ -19,7 +19,7 @@ public class ServiciosCestaCompra {
 		this.serviciosPlanta = serviciosPlanta;
 	}
 
-	@Transactional
+	@Transactional // Agrega una nueva Planta a la Cesta
 	public void agregarPlanta(String codigoPlanta, int cantidad) {
 		if (cantidad <= 0) {
 			return;
@@ -41,6 +41,32 @@ public class ServiciosCestaCompra {
 	public void insertarCesta(CestaCompra c) {
 		cestaCompraRepository.saveAndFlush(c);
 	}
+
+	public void actualizarCesta(CestaCompra c) {
+		cestaCompraRepository.saveAndFlush(c);
+	}
+
+	@Transactional // aumenta la cantida de una Planta en la Cesta
+	public void actualizaPlanta(String codigoPlanta, int cantidad, CestaCompra c) {
+
+		Planta planta = serviciosPlanta.buscarPlantaPorCodigo(codigoPlanta);
+		if (planta == null || planta.getCantidadDisponible() < cantidad) {
+			throw new IllegalArgumentException("No hay suficiente stock de la planta con código: " + codigoPlanta);
+		}
+
+		CestaCompra cesta = cestaCompraRepository.findById(1L).orElse(new CestaCompra());
+
+		cesta.setCantidad(cantidad);
+		cesta.setCodigoPlanta(codigoPlanta);
+
+		cestaCompraRepository.save(cesta);
+	}
+	
+	@Transactional	
+	public void eliminarDeCesta(String codigoPlanta, String usuario) {
+	    cestaCompraRepository.deleteByCodigoPlantaAndUsuario(codigoPlanta, usuario);
+	}
+
 
 //	@Transactional
 //	public void retirarProductoDeCesta(String codigoPlanta) {

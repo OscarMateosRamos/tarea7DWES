@@ -22,6 +22,7 @@
             <tr>
                 <th>Planta</th>
                 <th>Cantidad Disponible</th>
+                 <th>Cantidad en Cesta</th>
                 <th>Cantidad a Comprar</th>
             </tr>
         </thead>
@@ -29,6 +30,7 @@
             <tr th:each="planta : ${plantas}">
                 <td th:text="${planta.nombrecomun}"></td>
                 <td th:text="${planta.cantidadDisponible}"></td>
+                
                 <td>
                     <form th:action="@{/añadirACesta}" method="POST">
                         <input type="hidden" name="codigo" th:value="${planta.codigo}"/>

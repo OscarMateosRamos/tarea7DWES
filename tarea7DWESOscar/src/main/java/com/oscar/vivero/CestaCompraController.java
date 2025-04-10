@@ -54,67 +54,57 @@ public class CestaCompraController {
 	public String retirarDeCesta(@PathVariable("codigoPlanta") String codigo, HttpSession session, Model model) {
 
 		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
-		int i = 0;
-		int posicion = 0;
+		String usuario = (String) session.getAttribute("usuario");
 
-		if (lista != null) {
+		if (lista != null && usuario != null) {
 
-			for (CestaCompra l : lista) {
-
-				if (l.getCodigoPlanta().equals(codigo)) {
-					boolean existe = true;
-					posicion = i;
-				} else {
-					i = i++;
-				}
-			}
-
-			lista.remove(posicion);
+			lista.removeIf(item -> item.getCodigoPlanta().equals(codigo));
 			session.setAttribute("lista", lista);
 
+			servCesta.eliminarDeCesta(codigo, usuario);
 		}
-		return "CestaCompra";
+
+		return "redirect:/CestaCompra";
 	}
 
 	@GetMapping("/ConfirmarPedido")
 	public String confirmarPedido(HttpSession session, Model model) {
-	    ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
 
-	    if (lista == null || lista.isEmpty()) {
-	        model.addAttribute("mensaje", "No tienes productos en la cesta para confirmar.");
-	        return "ConfirmarPedido";
-	    }
+		if (lista == null || lista.isEmpty()) {
+			model.addAttribute("mensaje", "No tienes productos en la cesta para confirmar.");
+			return "ConfirmarPedido";
+		}
 
-	    Pedido p = new Pedido();
-	    p.setFecha(Date.valueOf(LocalDate.now()));
+		Pedido p = new Pedido();
+		p.setFecha(Date.valueOf(LocalDate.now()));
 
-	    List<Ejemplar> todosEjemplares = new ArrayList<>();
+		List<Ejemplar> todosEjemplares = new ArrayList<>();
 
-	    for (CestaCompra l : lista) {
-	        List<Ejemplar> ejemplaresTienda = servEjemplar.obtenerEjemplaresDisponiblesPorPlanta(l.getCodigoPlanta());
+		for (CestaCompra l : lista) {
+			List<Ejemplar> ejemplaresTienda = servEjemplar.obtenerEjemplaresDisponiblesPorPlanta(l.getCodigoPlanta());
 
-	        int cantidad = l.getCantidad();
-	        List<Ejemplar> seleccionados = new ArrayList<>();
+			int cantidad = l.getCantidad();
+			List<Ejemplar> seleccionados = new ArrayList<>();
 
-	        for (Ejemplar ej : ejemplaresTienda) {
-	            if (ej.isDisponible() && cantidad > 0) {
-	                ej.setDisponible(false);
-	                seleccionados.add(ej);
-	                cantidad--;
-	            }
-	        }
+			for (Ejemplar ej : ejemplaresTienda) {
+				if (ej.isDisponible() && cantidad > 0) {
+					ej.setDisponible(false);
+					seleccionados.add(ej);
+					cantidad--;
+				}
+			}
 
-	        todosEjemplares.addAll(seleccionados);
-	    }
+			todosEjemplares.addAll(seleccionados);
+		}
 
-	    p.setEjemplares(todosEjemplares);
-	    servPedido.insertarPedido(p);
+		p.setEjemplares(todosEjemplares);
+		servPedido.insertarPedido(p);
 
-	   
-	    session.setAttribute("ultimoPedido", p);
-	    model.addAttribute("lista", lista);
+		session.setAttribute("ultimoPedido", p);
+		model.addAttribute("lista", lista);
 
-	    return "ConfirmarPedido"; 
+		return "ConfirmarPedido";
 	}
 
 }
