@@ -1,9 +1,7 @@
 package com.oscar.vivero;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -103,50 +101,61 @@ public class PedidoController {
 
 	@PostMapping("/añadirACesta")
 	public String añadirACesta(@RequestParam("codigo") String codigo, @RequestParam("cantidad") int cantidad,
-			HttpSession session, Model model) {
+	                            HttpSession session, Model model) {
 
-		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
-		CestaCompra c = new CestaCompra();
-		boolean existe = false;
+	  
+	    ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
 
-		if (codigo != null && !codigo.isEmpty() && cantidad > 0) {
+	  
+	    if (lista == null) {
+	        lista = new ArrayList<>();
+	    }
 
-			int i = 0;
-			int nuevaCantidad = 0;
-			for (CestaCompra l : lista) {
+	    
+	   
+	    String usuario = (String) session.getAttribute("usuario");
 
-				if (l.getCodigoPlanta().equals(codigo)) {
-					existe = true;
+	    if (usuario == null) {
+	        model.addAttribute("error", "Debes estar autenticado para añadir productos a la cesta.");
+	        return "login"; 
+	    }
 
-					nuevaCantidad = l.getCantidad() + cantidad;
+	   
+	    CestaCompra c = new CestaCompra();
+	    c.setCodigoPlanta(codigo); 
+	    c.setCantidad(cantidad);   
+	   
+	    c.setUsuario(usuario); 
 
-				} else {
-					i = i++;
+	   
+	    boolean existe = false;
+	    for (CestaCompra item : lista) {
+	        if (item.getCodigoPlanta().equals(codigo)) {
+	            existe = true;
+	            item.setCantidad(item.getCantidad() + cantidad); 
+	            break;
+	        }
+	    }
 
-				}
-			}
+	   
+	    if (!existe) {
+	        lista.add(c);
+	       
+	        servCesta.insertarCesta(c); 
+	    } else {
+	        
+//	        servCesta.actualizarCesta(c); 
+	    }
 
-			if (!existe) {
+	 
+	    session.setAttribute("lista", lista);
 
-				c.setCodigoPlanta(codigo);
-				c.setCantidad(cantidad);
+	   
+	    model.addAttribute("success", "Producto añadido a la cesta con éxito.");
 
-			} else {
-
-				lista.remove(i);
-				c.setCodigoPlanta(codigo);
-				c.setCantidad(nuevaCantidad);
-			}
-
-			lista.add(c);
-			session.setAttribute("lista", lista);
-
-			model.addAttribute("success", "Producto añadido a la cesta con éxito.");
-		} else {
-			model.addAttribute("error", "Error al añadir a la cesta.");
-		}
-
-		return "/RealizarPedido";
-
+	  
+	    return "redirect:/CestaCompra";
 	}
+
+
 }

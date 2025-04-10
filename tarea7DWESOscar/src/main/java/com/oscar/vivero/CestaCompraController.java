@@ -62,7 +62,7 @@ public class CestaCompraController {
 			for (CestaCompra l : lista) {
 
 				if (l.getCodigoPlanta().equals(codigo)) {
-					existe = true;
+					boolean existe = true;
 					posicion = i;
 				} else {
 					i = i++;
@@ -77,29 +77,44 @@ public class CestaCompraController {
 	}
 
 	@GetMapping("/ConfirmarPedido")
-	public void confirmarPedido(HttpSession session) {
-		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
-		Pedido p = new Pedido();
+	public String confirmarPedido(HttpSession session, Model model) {
+	    ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
 
-		Ejemplar e = new Ejemplar();
-		for (CestaCompra l : lista) {
-			p.setFecha(Date.valueOf(LocalDate.now()));
-			List<Ejemplar> ejemplaresTienda = servEjemplar.obtenerEjemplaresDisponiblesPorPlanta(l.getCodigoPlanta());
+	    if (lista == null || lista.isEmpty()) {
+	        model.addAttribute("mensaje", "No tienes productos en la cesta para confirmar.");
+	        return "ConfirmarPedido";
+	    }
 
-			ArrayList<Ejemplar> ejemplaresP = new ArrayList<Ejemplar>();
+	    Pedido p = new Pedido();
+	    p.setFecha(Date.valueOf(LocalDate.now()));
 
-			int cantidad = l.getCantidad();
+	    List<Ejemplar> todosEjemplares = new ArrayList<>();
 
-			for (Ejemplar ej : ejemplaresTienda) {
-				if (ej.isDisponible() && cantidad > 0) {
-					ej.setDisponible(false);
-					ejemplaresP.add(ej);
-					cantidad--;
-				}
-			}
-			p.setEjemplares(ejemplaresTienda);
+	    for (CestaCompra l : lista) {
+	        List<Ejemplar> ejemplaresTienda = servEjemplar.obtenerEjemplaresDisponiblesPorPlanta(l.getCodigoPlanta());
 
-		}
-		servPedido.insertarPedido(p);
+	        int cantidad = l.getCantidad();
+	        List<Ejemplar> seleccionados = new ArrayList<>();
+
+	        for (Ejemplar ej : ejemplaresTienda) {
+	            if (ej.isDisponible() && cantidad > 0) {
+	                ej.setDisponible(false);
+	                seleccionados.add(ej);
+	                cantidad--;
+	            }
+	        }
+
+	        todosEjemplares.addAll(seleccionados);
+	    }
+
+	    p.setEjemplares(todosEjemplares);
+	    servPedido.insertarPedido(p);
+
+	   
+	    session.setAttribute("ultimoPedido", p);
+	    model.addAttribute("lista", lista);
+
+	    return "ConfirmarPedido"; 
 	}
+
 }

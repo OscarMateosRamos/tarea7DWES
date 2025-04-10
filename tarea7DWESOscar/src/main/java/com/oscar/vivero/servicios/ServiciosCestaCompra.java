@@ -39,7 +39,7 @@ public class ServiciosCestaCompra {
 	}
 
 	public void insertarCesta(CestaCompra c) {
-		cestaCompraRepository.save(c);
+		cestaCompraRepository.saveAndFlush(c);
 	}
 
 //	@Transactional
