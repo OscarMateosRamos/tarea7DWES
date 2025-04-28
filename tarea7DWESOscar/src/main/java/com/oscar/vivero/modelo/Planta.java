@@ -1,5 +1,6 @@
 package com.oscar.vivero.modelo;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "plantas")
-public class Planta {
+public class Planta implements Serializable {
 
     @Id
     @Column(unique = true)

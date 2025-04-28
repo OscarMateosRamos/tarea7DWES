@@ -40,11 +40,6 @@ public class ConfirmarPedidoController {
 		return "ConfirmarPedido";
 	}
 
-//	@PostMapping("/agregarACesta")
-//	public String agregarACesta() {
-//
-//		pedidoserv.agregarPedidoACesta(null);
-//
-//		return "redirect:/cestaCompra";
-//	}
+	
+	
 }
