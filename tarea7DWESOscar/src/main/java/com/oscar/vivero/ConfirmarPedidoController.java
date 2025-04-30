@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,108 +44,46 @@ public class ConfirmarPedidoController {
 	@Autowired
 	private ServiciosEjemplar ejemplarserv;
 
-	@GetMapping("/confirmarPedido")
-	public String confirmarPedido(HttpSession session, Model model) {
+	@PostMapping("/HacerPedido")
+	public String HacerPedido(HttpSession session, Model model) {
 
 		String usuario = (String) session.getAttribute("usuario");
-
 		if (usuario == null) {
 			model.addAttribute("error", "Debes estar autenticado para realizar un pedido.");
 			return "login";
 		}
 
-		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+		ArrayList<CestaCompra> cestaCompra = (ArrayList<CestaCompra>) session.getAttribute("lista");
 
-		if (lista == null || lista.isEmpty()) {
-			model.addAttribute("mensaje", "No tienes productos en la cesta para confirmar.");
-		} else {
-			model.addAttribute("lista", lista);
+		if (cestaCompra == null || cestaCompra.isEmpty()) {
+			model.addAttribute("mensaje", "No tienes productos en la cesta para realizar un pedido.");
+			return "RealizarPedido";
 		}
 
-		return "ConfirmarPedido";
-	}
+		for (CestaCompra item : cestaCompra) {
+			String codigoPlanta = item.getCodigoPlanta();
 
-	@PostMapping("/RealizarPedido")
-	public String realizarPedido(@AuthenticationPrincipal UserDetails userDetails, HttpSession session,
-			RedirectAttributes redirectAttributes) {
+			List<Ejemplar> ejemplaresDisponibles = ejemplarserv.obtenerEjemplaresDisponiblesPorPlanta(codigoPlanta);
+			int cantidadRestante = item.getCantidad();
+			System.out.println("Codigo de Planta: " + codigoPlanta + "Cantidad: " + item.getCantidad());
+			for (Ejemplar ejemplar : ejemplaresDisponibles) {
 
-		Cliente cliente = obtenerClienteAutenticado();
+				if (cantidadRestante > 0 && ejemplar.isDisponible()) {
+					ejemplar.setDisponible(false);
+					cantidadRestante--;
 
-		if (cliente == null) {
-			redirectAttributes.addFlashAttribute("mensaje", "Debes estar autenticado para realizar un pedido.");
-			return "redirect:/login";
-		}
-
-		List<CestaCompra> lista = (List<CestaCompra>) session.getAttribute("lista");
-
-		if (lista == null || lista.isEmpty()) {
-			redirectAttributes.addFlashAttribute("mensaje",
-					"El carrito está vacío. No se ha podido confirmar el pedido.");
-			return "redirect:/confirmarPedido";
-		}
-
-		LocalDateTime now = LocalDateTime.now();
-		Date date = (Date) Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
-
-		Pedido pedido = new Pedido();
-		pedido.setCliente(cliente);
-		pedido.setFecha(date);
-
-		List<Ejemplar> ejemplaresVendidos = new ArrayList<>();
-
-		for (CestaCompra item : lista) {
-			Planta tipoPlanta = plantaserv.buscarPlantaPorCodigo(item.getCodigoPlanta());
-
-			if (tipoPlanta == null) {
-				redirectAttributes.addFlashAttribute("mensaje", "Planta no encontrada.");
-				return "redirect:/confirmarPedido";
+				}
 			}
 
-			int cantidadSolicitada = item.getCantidad();
-			int stockActual = (int) tipoPlanta.getCantidadDisponible();
-
-			if (stockActual < cantidadSolicitada) {
-				redirectAttributes.addFlashAttribute("mensaje",
-						"No hay suficiente stock para la planta: " + tipoPlanta.getNombrecomun());
-				return "redirect:/confirmarPedido";
-			}
-
-			tipoPlanta.setCantidadDisponible(stockActual - cantidadSolicitada);
-			plantaserv.insertarPlanta(tipoPlanta);
-
-			List<Ejemplar> ejemplaresDisponibles = ejemplarserv
-					.obtenerEjemplaresDisponiblesPorPlanta(tipoPlanta.getCodigo());
-
-			for (int i = 0; i < cantidadSolicitada; i++) {
-				Ejemplar ejemplar = ejemplaresDisponibles.get(i);
-				ejemplar.setDisponible(false);
-				ejemplarserv.actualizarEjemplarAlRealizarPedido(ejemplar, null);
-				ejemplaresVendidos.add(ejemplar);
+			if (cantidadRestante > 0) {
+				model.addAttribute("mensaje",
+						"No hay suficientes ejemplares disponibles para la planta " + codigoPlanta);
+				return "RealizarPedido";
 			}
 		}
 
-		pedido.setEjemplares(ejemplaresVendidos);
-		pedidoserv.insertar(pedido);
-
-		session.removeAttribute("lista");
-		redirectAttributes.addFlashAttribute("mensaje", "Pedido realizado correctamente. ¡Gracias por tu compra!");
-
-		return "redirect:/confirmarPedido";
-	}
-
-	public Cliente obtenerClienteAutenticado() {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-		String username;
-		if (principal instanceof UserDetails) {
-			username = ((UserDetails) principal).getUsername();
-		} else {
-			username = principal.toString();
-
-			return clienteserv.buscarPorUsuario(username);
-		}
-		return null;
-
+		model.addAttribute("mensaje", "Pedido realizado con éxito.");
+		return "RealizarPedido";
 	}
 
 }

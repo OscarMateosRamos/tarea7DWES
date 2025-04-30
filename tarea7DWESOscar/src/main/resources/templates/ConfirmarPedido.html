@@ -36,10 +36,15 @@
             </table>
 
             <div class="boton-container">
-                <form th:action="@{/RealizarPedido}" method="post">
-                    <button type="submit" class="boton">Realizar Pedido</button>
+                <form th:action="@{/HacerPedido}" method="post">
+                    <button type="submit" class="boton">Confirmar Pedido</button>
                 </form>
             </div>
+            
+             <div class="boton-container">
+                <a href="/CestaCompra" class="boton">Volver a la Cesta</a>
+            </div>
+            
         </div>
 
         <div th:if="${lista == null or lista.isEmpty()}">

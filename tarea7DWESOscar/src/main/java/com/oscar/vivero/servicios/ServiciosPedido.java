@@ -78,5 +78,7 @@ public class ServiciosPedido {
 	public void insertar(Pedido p) {
 		pedidorepo.saveAndFlush(p);
 	}
-
+	
+	
+	
 }

@@ -27,6 +27,9 @@ public class Ejemplar implements Serializable {
 	@Column
 	private String nombre;
 
+	@Column(nullable = false)
+	private boolean disponible = true;
+
 	@ManyToOne
 	@JoinColumn(name = "idplanta")
 	private Planta planta;
@@ -39,10 +42,8 @@ public class Ejemplar implements Serializable {
 	@JoinColumn(name = "idpedido")
 	private Pedido pedido;
 
-	@Column(nullable = false)
-	private boolean disponible = true;
-
 	public Ejemplar() {
+
 	}
 
 	public Ejemplar(Long id, String nombre, Planta planta, List<Mensaje> mensajes, Pedido pedido, boolean disponible) {

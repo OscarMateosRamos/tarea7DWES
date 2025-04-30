@@ -69,40 +69,48 @@ public class CestaCompraController {
 
 	@GetMapping("/ConfirmarPedido")
 	public String confirmarPedido(HttpSession session, Model model) {
-		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
 
-		if (lista == null || lista.isEmpty()) {
+		String usuario = (String) session.getAttribute("usuario");
+		if (usuario == null) {
+			model.addAttribute("error", "Debes estar autenticado para realizar un pedido.");
+			return "login";
+		}
+
+		ArrayList<CestaCompra> cestaCompra = (ArrayList<CestaCompra>) session.getAttribute("lista");
+
+		if (cestaCompra == null || cestaCompra.isEmpty()) {
 			model.addAttribute("mensaje", "No tienes productos en la cesta para confirmar.");
 			return "ConfirmarPedido";
 		}
 
-		Pedido p = new Pedido();
-		p.setFecha(Date.valueOf(LocalDate.now()));
+		Pedido pedido = new Pedido();
+		pedido.setFecha(Date.valueOf(LocalDate.now()));
 
-		List<Ejemplar> todosEjemplares = new ArrayList<>();
+		List<Ejemplar> ejemplaresSeleccionados = new ArrayList<>();
 
-		for (CestaCompra l : lista) {
-			List<Ejemplar> ejemplaresTienda = servEjemplar.obtenerEjemplaresDisponiblesPorPlanta(l.getCodigoPlanta());
+		for (CestaCompra item : cestaCompra) {
 
-			int cantidad = l.getCantidad();
-			List<Ejemplar> seleccionados = new ArrayList<>();
+			List<Ejemplar> ejemplaresDisponibles = servEjemplar
+					.obtenerEjemplaresDisponiblesPorPlanta(item.getCodigoPlanta());
 
-			for (Ejemplar ej : ejemplaresTienda) {
-				if (ej.isDisponible() && cantidad > 0) {
-					ej.setDisponible(false);
-					seleccionados.add(ej);
-					cantidad--;
+			int cantidadRestante = item.getCantidad();
+
+			for (Ejemplar ejemplar : ejemplaresDisponibles) {
+				if (ejemplar.isDisponible() && cantidadRestante > 0) {
+					ejemplar.setDisponible(false);
+					ejemplaresSeleccionados.add(ejemplar);
+					cantidadRestante--;
 				}
 			}
-
-			todosEjemplares.addAll(seleccionados);
 		}
 
-		p.setEjemplares(todosEjemplares);
-		servPedido.insertarPedido(p);
+		pedido.setEjemplares(ejemplaresSeleccionados);
 
-		session.setAttribute("ultimoPedido", p);
-		model.addAttribute("lista", lista);
+		servPedido.insertarPedido(pedido);
+
+		session.setAttribute("ultimoPedido", pedido);
+
+		model.addAttribute("lista", cestaCompra);
 
 		return "ConfirmarPedido";
 	}
