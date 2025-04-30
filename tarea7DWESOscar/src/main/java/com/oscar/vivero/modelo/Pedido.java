@@ -45,12 +45,12 @@ public class Pedido implements Serializable {
 		super();
 	}
 
-	public Pedido(Long id, Date fecha, Cliente cliente, List<Ejemplar> ejemplares, Map<String, Integer> cantidades,
-			List<Mensaje> anotacion, String estado) {
+	public Pedido(Long id, Date fecha, Cliente cliente, List<Ejemplar> ejemplares, String estado) {
 		super();
 		this.id = id;
 		this.fecha = fecha;
 		this.cliente = cliente;
+		this.ejemplares = ejemplares;
 		this.estado = estado;
 	}
 
@@ -81,8 +81,6 @@ public class Pedido implements Serializable {
 	public List<Ejemplar> getEjemplares() {
 		return ejemplares;
 	}
-	
-	
 
 	public void setEjemplares(List<Ejemplar> ejemplares) {
 		this.ejemplares = ejemplares;

@@ -38,7 +38,7 @@ public class Planta implements Serializable {
     @JoinColumn(name = "idplanta")
     private List<Ejemplar> ejemplares = new LinkedList<>();
 
-    // Nuevo campo para la cantidad disponible
+    
     private long cantidadDisponible;
 
     public Planta() {
