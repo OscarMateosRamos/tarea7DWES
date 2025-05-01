@@ -1,5 +1,7 @@
 package com.oscar.vivero.servicios;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.oscar.vivero.modelo.CestaCompra;
@@ -19,7 +21,7 @@ public class ServiciosCestaCompra {
 		this.serviciosPlanta = serviciosPlanta;
 	}
 
-	@Transactional // Agrega una nueva Planta a la Cesta
+	@Transactional
 	public void agregarPlanta(String codigoPlanta, int cantidad) {
 		if (cantidad <= 0) {
 			return;
@@ -61,12 +63,16 @@ public class ServiciosCestaCompra {
 
 		cestaCompraRepository.save(cesta);
 	}
-	
-	@Transactional	
+
+	@Transactional
 	public void eliminarDeCesta(String codigoPlanta, String usuario) {
-	    cestaCompraRepository.deleteByCodigoPlantaAndUsuario(codigoPlanta, usuario);
+		cestaCompraRepository.deleteByCodigoPlantaAndUsuario(codigoPlanta, usuario);
 	}
 
+	public List<CestaCompra> verCestaCompra() {
+		List<CestaCompra> cesta = cestaCompraRepository.findAll();
+		return cesta;
+	}
 
 //	@Transactional
 //	public void retirarProductoDeCesta(String codigoPlanta) {

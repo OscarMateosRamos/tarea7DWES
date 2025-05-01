@@ -1,7 +1,5 @@
 package com.oscar.vivero;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Ejemplar;
-import com.oscar.vivero.modelo.Pedido;
 import com.oscar.vivero.servicios.ServiciosCestaCompra;
 import com.oscar.vivero.servicios.ServiciosEjemplar;
 import com.oscar.vivero.servicios.ServiciosPedido;
@@ -83,9 +80,6 @@ public class CestaCompraController {
 			return "ConfirmarPedido";
 		}
 
-		Pedido pedido = new Pedido();
-		pedido.setFecha(Date.valueOf(LocalDate.now()));
-
 		List<Ejemplar> ejemplaresSeleccionados = new ArrayList<>();
 
 		for (CestaCompra item : cestaCompra) {
@@ -103,12 +97,6 @@ public class CestaCompraController {
 				}
 			}
 		}
-
-		pedido.setEjemplares(ejemplaresSeleccionados);
-
-		servPedido.insertarPedido(pedido);
-
-		session.setAttribute("ultimoPedido", pedido);
 
 		model.addAttribute("lista", cestaCompra);
 

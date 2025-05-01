@@ -1,28 +1,19 @@
 package com.oscar.vivero;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.oscar.vivero.modelo.CestaCompra;
-import com.oscar.vivero.modelo.Cliente;
-import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.Pedido;
-import com.oscar.vivero.modelo.Planta;
+import com.oscar.vivero.servicios.ServiciosCestaCompra;
 import com.oscar.vivero.servicios.ServiciosCliente;
+import com.oscar.vivero.servicios.ServiciosCredenciales;
 import com.oscar.vivero.servicios.ServiciosEjemplar;
 import com.oscar.vivero.servicios.ServiciosPedido;
 import com.oscar.vivero.servicios.ServiciosPlanta;
@@ -44,16 +35,35 @@ public class ConfirmarPedidoController {
 	@Autowired
 	private ServiciosEjemplar ejemplarserv;
 
+	@Autowired
+	private ServiciosCestaCompra cestaserv;
+
+	@Autowired
+	private ServiciosCredenciales credencialesserv;
+
 	@PostMapping("/HacerPedido")
 	public String HacerPedido(HttpSession session, Model model) {
-
+//Añadir un nuevo Pedido
 		String usuario = (String) session.getAttribute("usuario");
-		if (usuario == null) {
-			model.addAttribute("error", "Debes estar autenticado para realizar un pedido.");
-			return "login";
+		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+
+		Pedido p = new Pedido();
+
+		p.setCliente(clienteserv.buscarClientePorId(credencialesserv.buscarCredencialPorUsuario(usuario).getId()));
+		
+		p.setFecha(Date.valueOf(LocalDate.now()));
+		
+	
+		
+		if (lista != null && usuario != null) {
+			lista.removeIf(item -> item.getUsuario().equals(usuario));
+			// lista.removeIf(item -> item.getCodigoPlanta().equals(codigo));
+			session.setAttribute("lista", lista);
+
 		}
 
-		ArrayList<CestaCompra> cestaCompra = (ArrayList<CestaCompra>) session.getAttribute("lista");
+//		// De la tabla Cesta Compra para que controla todas las cestas
+		ArrayList<CestaCompra> cestaCompra = (ArrayList<CestaCompra>) cestaserv.verCestaCompra();
 
 		if (cestaCompra == null || cestaCompra.isEmpty()) {
 			model.addAttribute("mensaje", "No tienes productos en la cesta para realizar un pedido.");
@@ -61,24 +71,9 @@ public class ConfirmarPedidoController {
 		}
 
 		for (CestaCompra item : cestaCompra) {
-			String codigoPlanta = item.getCodigoPlanta();
 
-			List<Ejemplar> ejemplaresDisponibles = ejemplarserv.obtenerEjemplaresDisponiblesPorPlanta(codigoPlanta);
-			int cantidadRestante = item.getCantidad();
-			System.out.println("Codigo de Planta: " + codigoPlanta + "Cantidad: " + item.getCantidad());
-			for (Ejemplar ejemplar : ejemplaresDisponibles) {
-
-				if (cantidadRestante > 0 && ejemplar.isDisponible()) {
-					ejemplar.setDisponible(false);
-					cantidadRestante--;
-
-				}
-			}
-
-			if (cantidadRestante > 0) {
-				model.addAttribute("mensaje",
-						"No hay suficientes ejemplares disponibles para la planta " + codigoPlanta);
-				return "RealizarPedido";
+			if (item.getUsuario().equalsIgnoreCase(usuario)) {
+				cestaserv.eliminarDeCesta(item.getCodigoPlanta(), usuario);
 			}
 		}
 

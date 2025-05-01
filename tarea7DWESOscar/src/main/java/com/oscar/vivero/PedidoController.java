@@ -30,7 +30,6 @@ public class PedidoController {
 
 	@Autowired
 	private ServiciosEjemplar servEjemplar;
-
 	@Autowired
 	private ServiciosPlanta servPlanta;
 
@@ -38,66 +37,42 @@ public class PedidoController {
 	private ServiciosCestaCompra servCesta;
 
 	@GetMapping("/RealizarPedido")
-	public String mostrarRealizarPedido(Model model) {
+	public String mostrarRealizarPedido(HttpSession session, Model model) {
 
 		List<Planta> plantas = servPlanta.obtenerPlantasConEjemplares();
+		List<CestaCompra> lista = servCesta.verCestaCompra();
+		String usuario = (String) session.getAttribute("usuario");
 
+		// Para cada planta, calcular cantidad disponible real (descontando lo que hay
+		// en la cesta)
 		for (Planta planta : plantas) {
+			long enCesta = 0;
+
+			// Contar ejemplares disponibles
 			long cantidadDisponible = planta.getEjemplares().stream().filter(Ejemplar::isDisponible).count();
-			planta.setCantidadDisponible(cantidadDisponible);
+
+			// Verificar si esta planta está en la cesta y sumar cuántos hay
+			if (lista != null) {
+				for (CestaCompra cestaCompra : lista) {
+					if (cestaCompra.getCodigoPlanta().equalsIgnoreCase(planta.getCodigo())) {
+						enCesta += cestaCompra.getCantidad();
+					}
+				}
+			}
+
+			;
+			// Actualizar solo en memoria la cantidad disponible restante
+			planta.setCantidadDisponible((int) (cantidadDisponible - enCesta));
 		}
 
+		// Cargar datos al modelo
 		CestaCompra cestaCompra = new CestaCompra();
 		model.addAttribute("plantas", plantas);
 		model.addAttribute("pedido", cestaCompra);
+		model.addAttribute("usuario", usuario);
 
 		return "RealizarPedido";
 	}
-
-//	@PostMapping("/CamposPedido")
-//	public String procesarPedido(@ModelAttribute Pedido pedido, Model model) {
-//	if (pedido.getCantidades() == null || pedido.getCantidades().isEmpty()) {
-//		model.addAttribute("mensajeError", "Debe seleccionar al menos un ejemplar.");
-//			return "RealizarPedido";
-//	}
-//
-//		try {
-//			pedido.getCantidades().forEach((codigoPlanta, cantidad) -> {
-//			if (cantidad > 0) {
-//				Planta planta = servPlanta.buscarPlantaPorCodigo(codigoPlanta);
-//					if (planta != null) {
-//					long cantidadDisponible = planta.getCantidadDisponible();
-//					if (cantidad <= cantidadDisponible) {
-//							List<Ejemplar> ejemplaresDisponibles = planta.getEjemplares().stream()
-//								.filter(Ejemplar::isDisponible).collect(Collectors.toList());
-//
-//						for (int i = 0; i < cantidad; i++) {
-//							if (!ejemplaresDisponibles.isEmpty()) {
-//								Ejemplar ejemplar = ejemplaresDisponibles.remove(0);
-//
-//								Mensaje anotacion = new Mensaje();
-//								anotacion.setEjemplar(ejemplar);
-//								anotacion.setFechahora(new java.sql.Date(System.currentTimeMillis()));
-//								pedido.getAnotacion().add(anotacion);
-//							}
-//						}
-//					} else {
-//						throw new RuntimeException("Cantidad solicitada excede la disponible.");
-//						}
-//				}
-//			}
-//
-//			servPedido.insertarPedido(pedido);
-//			model.addAttribute("mensajeExito", "Pedido realizado con éxito.");
-//		} catch (Exception e) {
-//		model.addAttribute("mensajeError", "Error al procesar el pedido: " + e.getMessage());
-//		}
-//
-//		model.addAttribute("pedido", pedido);
-//		model.addAttribute("ejemplaresEnPedido", pedido.getEjemplares());
-//
-//		return "CestaCompra";
-//	}
 
 	@PostMapping("/añadirACesta")
 	public String añadirACesta(@RequestParam("codigo") String codigo, @RequestParam("cantidad") int cantidad,

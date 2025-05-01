@@ -1,5 +1,6 @@
 package com.oscar.vivero.servicios;
 
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.oscar.vivero.modelo.Cliente;
+import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.repositories.ClienteRepository;
 import com.oscar.vivero.repositories.CredencialRepository;
 
@@ -99,4 +101,7 @@ public class ServiciosCliente {
 		clienterepo.saveAndFlush(c);
 	}
 
+	public Cliente buscarClientePorId(Long id) {
+		return clienterepo.findById(id).orElse(null);
+	}
 }
