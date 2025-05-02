@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class GestiondeMensajesController {
 	@GetMapping({  "GestiondeMensajes" })
 	public String GestiondePlantas() {
-		return "GestiondeMensajes";
+		return "/personal/GestiondeMensajes";
 
 	}
 	
 	@GetMapping("/GestionMensajesMenuAdmin")  
 	public String mostrarMenuAdmin() {
-	    return "redirect:/inicio";
+	    return "/admin/MenuAdmin";
 	}
 }

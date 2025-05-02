@@ -50,17 +50,17 @@ public class MensajesController {
 
 		if (usuario == null) {
 			model.addAttribute("error", "No estás autenticado. Por favor, inicia sesión.");
-			return "formularioLogIn";
+			return "/log/formularioLogIn";
 		}
 
 		if (id == null || id == 0) {
 			model.addAttribute("error", "Debe seleccionar un ejemplar.");
-			return "CrearMensaje";
+			return "/personal/CrearMensaje";
 		}
 
 		if (!servEjemplar.existeIdEjemplar(id)) {
 			model.addAttribute("error", "No existe el idEjemplar: " + id);
-			return "CrearMensaje";
+			return "/personal/CrearMensaje";
 		}
 
 		Persona p = servPersona.buscarPorNombre(usuario);
@@ -68,12 +68,12 @@ public class MensajesController {
 
 		if (p == null) {
 			model.addAttribute("error", "No se ha encontrado a la persona.");
-			return "CrearMensaje";
+			return "/personal/CrearMensaje";
 		}
 
 		if (ej == null) {
 			model.addAttribute("error", "No se ha encontrado el ejemplar.");
-			return "CrearMensaje";
+			return "/personal/CrearMensaje";
 		}
 
 		Date fechaHoraDate;
@@ -81,7 +81,7 @@ public class MensajesController {
 			fechaHoraDate = Date.valueOf(fechahora);
 		} catch (IllegalArgumentException e) {
 			model.addAttribute("error", "Fecha no válida, debe ser en formato yyyy-MM-dd.");
-			return "CrearMensaje";
+			return "/personal/CrearMensaje";
 		}
 
 		Mensaje m = new Mensaje();
@@ -93,7 +93,7 @@ public class MensajesController {
 		servMensaje.insertar(m);
 
 		model.addAttribute("success", "Mensaje insertado exitosamente.");
-		return "CrearMensaje";
+		return "/personal/CrearMensaje";
 	}
 
 	@GetMapping("/mostrarCrearMensajes")
@@ -105,7 +105,7 @@ public class MensajesController {
 
 		model.addAttribute("ejemplares", ejemplares);
 
-		return "CrearMensaje";
+		return "/personal/CrearMensaje";
 
 	}
 
@@ -113,7 +113,7 @@ public class MensajesController {
 	public String listarMensajes(Model model) {
 		List<Mensaje> m = servMensaje.verTodosMensajes();
 		model.addAttribute("mensajes", m);
-		return "listadodeMensajes";
+		return "/personal/listadodeMensajes";
 	}
 
 	@GetMapping("/filtrarMensajesPorFecha")

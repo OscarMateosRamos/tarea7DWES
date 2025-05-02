@@ -38,7 +38,7 @@ public class PlantaController {
 	public String listarPlantasPer(Model model) {
 		List<Planta> p = servPlanta.vertodasPlantas();
 		model.addAttribute("plantas", p);
-		return "listadodePlantasPersonal";
+		return "/personal/listadodePlantasPersonal";
 	}
 
 	@PostMapping("/CamposPlanta")

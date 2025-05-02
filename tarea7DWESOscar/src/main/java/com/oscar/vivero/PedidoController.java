@@ -71,7 +71,7 @@ public class PedidoController {
 		model.addAttribute("pedido", cestaCompra);
 		model.addAttribute("usuario", usuario);
 
-		return "RealizarPedido";
+		return "/cliente/RealizarPedido";
 	}
 
 	@PostMapping("/añadirACesta")

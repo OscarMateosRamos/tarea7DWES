@@ -29,7 +29,7 @@ public class MainController {
 
 	@GetMapping("/MenuPersonal")
 	public String mostrarMenuPersonal() {
-		return "MenuPersonal";
+		return "/personal/MenuPersonal";
 	}
 
 	@GetMapping("/MenuAdmin")
@@ -86,14 +86,14 @@ public class MainController {
 			return "/admin/MenuAdmin";
 		case "personal":
 			System.out.println("--Bienvenido Personal--");
-			return "redirect:/MenuPersonal";
+			return "/personal/MenuPersonal";
 		case "cliente":
 			System.out.println("--Bienvenido Cliente--");
-			return "redirect:/RealizarPedido";
+			return "/cliente/RealizarPedido";
 		default:
 			System.out.println("--Rol no reconocido--");
 			model.addAttribute("error", "Rol no reconocido.");
-			return "formularioLogin";
+			return "/log/formularioLogin";
 		}
 	}
 

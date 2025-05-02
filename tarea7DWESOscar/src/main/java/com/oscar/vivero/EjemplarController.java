@@ -132,14 +132,14 @@ public class EjemplarController {
 			model.addAttribute("mensajes", todosLosMensajes);
 		}
 
-		return "verMensajesEjemplar";
+		return "/personal/verMensajesEjemplar";
 	}
 
 	@GetMapping("/GestionStock")
 	public String gestionStockEjemplares(Model model) {
 		List<Planta> plantas = servPlanta.vertodasPlantas(); // Método que devuelve todas las plantas
 		model.addAttribute("plantas", plantas);
-		return "GestionStock";
+		return "/personal/GestionStock";
 	}
 
 }
