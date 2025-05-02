@@ -76,7 +76,7 @@ public class ClienteController {
             model.addAttribute("mensajeExito", "Cliente añadido correctamente.");
             model.addAttribute("cliente", new Cliente());  
 
-            return "redirect:/MenuInvitado"; 
+            return "redirect:/inicio"; 
         } catch (Exception e) {
            
             model.addAttribute("mensajeError", "Hubo un error al registrar el cliente. Por favor, intente nuevamente.");

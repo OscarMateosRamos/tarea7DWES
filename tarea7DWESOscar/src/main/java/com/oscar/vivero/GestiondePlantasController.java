@@ -10,12 +10,12 @@ public class GestiondePlantasController {
 	@GetMapping({ "GestiondePlantas" })
 	public String GestiondePlantas() {
 
-		return "GestiondePlantas";
+		return "/admin/GestiondePlantas";
 
 	}
 
 	@GetMapping("/GestionPlantasMenuAdmin")  
 	public String mostrarMenuAdmin() {
-	    return "redirect:/MenuAdmin";
+	    return "/admin/MenuAdmin";
 	}
 }

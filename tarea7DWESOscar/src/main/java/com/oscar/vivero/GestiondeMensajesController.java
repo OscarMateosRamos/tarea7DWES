@@ -13,6 +13,6 @@ public class GestiondeMensajesController {
 	
 	@GetMapping("/GestionMensajesMenuAdmin")  
 	public String mostrarMenuAdmin() {
-	    return "redirect:/MenuAdmin";
+	    return "redirect:/inicio";
 	}
 }

@@ -22,9 +22,9 @@ public class MainController {
 	@Autowired
 	ServiciosCredenciales servCredenciales;
 
-	@GetMapping({ "/", "MenuInvitado" })
+	@GetMapping({ "/", "inicio" })
 	public String MenuInvitado() {
-		return "MenuInvitado";
+		return "inicio";
 	}
 
 	@GetMapping("/MenuPersonal")
@@ -40,7 +40,7 @@ public class MainController {
 	@GetMapping("/login")
 	public String login(Model model) {
 		model.addAttribute("credenciales", new Credenciales());
-		return "formularioLogin";
+		return "/log/formularioLogin";
 	}
 
 	@PostMapping("/Sesion")
@@ -83,7 +83,7 @@ public class MainController {
 		switch (rol.toLowerCase()) {
 		case "admin":
 			System.out.println("--Bienvenido Admin--");
-			return "redirect:/MenuAdmin";
+			return "/admin/MenuAdmin";
 		case "personal":
 			System.out.println("--Bienvenido Personal--");
 			return "redirect:/MenuPersonal";
@@ -102,7 +102,7 @@ public class MainController {
 		System.out.println("Cerrando sesión...");
 		session.invalidate();
 		System.out.println("Sesión invalidada.");
-		return "redirect:/MenuInvitado";
+		return "redirect:/inicio";
 	}
 
 }

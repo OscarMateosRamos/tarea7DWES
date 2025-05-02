@@ -54,7 +54,7 @@ public class EjemplarController {
 				ej.setPlanta(plantas.get(0));
 			} else {
 				model.addAttribute("error", "La planta con el nombre " + codigoPlanta + " no fue encontrada.");
-				return "CrearEjemplar";
+				return "/personal/CrearEjemplar";
 			}
 
 			ej.setNombre(codigoPlanta);
@@ -68,10 +68,10 @@ public class EjemplarController {
 
 			servEjemplar.insertarEjemplar(ej);
 
-			return "CrearEjemplar";
+			return "/personal/CrearEjemplar";
 		} else {
 			model.addAttribute("error", "No existe el código de la planta.");
-			return "CrearEjemplar";
+			return "/personal/CrearEjemplar";
 		}
 	}
 
@@ -84,7 +84,7 @@ public class EjemplarController {
 		Ejemplar ejemplar = new Ejemplar();
 		model.addAttribute("ejemplar", ejemplar);
 
-		return "CrearEjemplar";
+		return "/personal/CrearEjemplar";
 	}
 
 	@GetMapping("/ejemplaresTipoPlanta")
@@ -102,7 +102,7 @@ public class EjemplarController {
 		model.addAttribute("ejemplares", ejemplares);
 		model.addAttribute("codigoPlanta", codigo);
 
-		return "listadoEjemplaresTipoPlanta";
+		return "/personal/listadoEjemplaresTipoPlanta";
 	}
 
 	@GetMapping("/verMensajesEjemplar")

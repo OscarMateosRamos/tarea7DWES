@@ -52,7 +52,7 @@ public class PlantaController {
 
 		if (CrearPlanta.getCodigo() == null || CrearPlanta.getCodigo().isEmpty()) {
 			model.addAttribute("error", "El código de la planta es obligatorio.");
-			return "CrearPlantas";
+			return "/admin/CrearPlantas";
 		}
 
 		p.setCodigo(codigo);
@@ -62,12 +62,12 @@ public class PlantaController {
 
 		if (!credValidas) {
 			model.addAttribute("error", " campos de la Planta Invalidos.");
-			return "CrearPlantas";
+			return "/admin/CrearPlantas";
 		}
 
 		servPlanta.insertarPlanta(p);
 
-		return "/CrearPlantas";
+		return "/admin/CrearPlantas";
 	}
 
 	@PostMapping("/CamposModificarPlanta/{id}")
@@ -76,7 +76,7 @@ public class PlantaController {
 
 	    if (existePlanta == null) {
 	        redirectAttributes.addFlashAttribute("error", "Planta no encontrada.");
-	        return "redirect:/ModificarPlantas";
+	        return "/admin/ModificarPlantas";
 	    }
 
 	    
@@ -87,26 +87,26 @@ public class PlantaController {
 	    boolean credValidas = servPlanta.validarPlantaSinCodigo(existePlanta);
 	    if (!credValidas) {
 	        redirectAttributes.addFlashAttribute("error", "Campos de la Planta inválidos.");
-	        return "redirect:/ModificarPlantas";
+	        return "/admin/ModificarPlantas";
 	    }
 
 	    servPlanta.modificarPlanta(existePlanta);
 	    redirectAttributes.addFlashAttribute("exito", "Planta modificada correctamente.");
 
-	    return "redirect:/plantas";
+	    return "/admin/GestiondePlantas";
 	}
 
 	@GetMapping("/CrearPlantas")
 	public String mostrarCrearPlantaFormulario(Model model) {
 		model.addAttribute("planta", new Planta());
-		return "CrearPlantas";
+		return "/admin/CrearPlantas";
 	}
 
 	@GetMapping("/ModificarPlantas")
 	public String mostrarCrearModificarPlantasFormulario(Model model) {
 		List<Planta> p = servPlanta.vertodasPlantas();
 		model.addAttribute("plantas", p);
-		return "/ModificarPlanta";
+		return "/admin/ModificarPlanta";
 	}
 
 	@GetMapping("/formularioModificarPlanta/{id}")
@@ -120,7 +120,7 @@ public class PlantaController {
 		}
 
 		model.addAttribute("planta", p);
-		return "formularioModificarPlanta";
+		return "/admin/formularioModificarPlanta";
 	}
 
 }

@@ -25,7 +25,7 @@ public class PersonaController {
 	@GetMapping("/personas")
 	public String listarPersonas(Model model) {
 		model.addAttribute("personas", servPersona.vertodasPersonas());
-		return "listadodePersonas";
+		return "/admin/listadodePersonas";
 	}
 
 	@PostMapping("/CamposPersona")
@@ -73,6 +73,6 @@ public class PersonaController {
 	@GetMapping("/mostrarCrearPersonas")
 	public String mostrarFormulario(Model model) {
 		model.addAttribute("persona", new Persona());
-		return "CrearPersonas";
+		return "/admin/CrearPersonas";
 	}
 }
