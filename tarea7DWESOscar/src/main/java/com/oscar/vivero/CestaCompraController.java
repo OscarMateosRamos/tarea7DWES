@@ -44,7 +44,7 @@ public class CestaCompraController {
 			model.addAttribute("lista", lista);
 		}
 
-		return "CestaCompra";
+		return "/cliente/CestaCompra";
 	}
 
 	@GetMapping("/retirarDeCesta/{codigoPlanta}")
@@ -61,7 +61,7 @@ public class CestaCompraController {
 			servCesta.eliminarDeCesta(codigo, usuario);
 		}
 
-		return "redirect:/CestaCompra";
+		return "/cliente/CestaCompra";
 	}
 
 	@GetMapping("/ConfirmarPedido")

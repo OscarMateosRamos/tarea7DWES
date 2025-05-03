@@ -67,7 +67,7 @@ public class ConfirmarPedidoController {
 
 		if (cestaCompra == null || cestaCompra.isEmpty()) {
 			model.addAttribute("mensaje", "No tienes productos en la cesta para realizar un pedido.");
-			return "RealizarPedido";
+			return "/cliente/RealizarPedido";
 		}
 
 		for (CestaCompra item : cestaCompra) {
@@ -78,7 +78,7 @@ public class ConfirmarPedidoController {
 		}
 
 		model.addAttribute("mensaje", "Pedido realizado con éxito.");
-		return "RealizarPedido";
+		return "/cliente/RealizarPedido";
 	}
 
 }

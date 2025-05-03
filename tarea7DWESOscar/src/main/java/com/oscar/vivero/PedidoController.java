@@ -43,15 +43,11 @@ public class PedidoController {
 		List<CestaCompra> lista = servCesta.verCestaCompra();
 		String usuario = (String) session.getAttribute("usuario");
 
-		// Para cada planta, calcular cantidad disponible real (descontando lo que hay
-		// en la cesta)
 		for (Planta planta : plantas) {
 			long enCesta = 0;
 
-			// Contar ejemplares disponibles
 			long cantidadDisponible = planta.getEjemplares().stream().filter(Ejemplar::isDisponible).count();
 
-			// Verificar si esta planta está en la cesta y sumar cuántos hay
 			if (lista != null) {
 				for (CestaCompra cestaCompra : lista) {
 					if (cestaCompra.getCodigoPlanta().equalsIgnoreCase(planta.getCodigo())) {
@@ -61,7 +57,7 @@ public class PedidoController {
 			}
 
 			;
-			// Actualizar solo en memoria la cantidad disponible restante
+
 			planta.setCantidadDisponible((int) (cantidadDisponible - enCesta));
 		}
 

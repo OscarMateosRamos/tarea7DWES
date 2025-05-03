@@ -64,7 +64,7 @@ public class ClienteController {
         if (!camposValidos) {
             model.addAttribute("mensajeError", "Campos del Cliente inválidos.");
             model.addAttribute("cliente", RegistroCliente);  
-            return "RegistroCliente";
+            return "/registro/RegistroCliente";
         }
 
       
@@ -83,7 +83,7 @@ public class ClienteController {
             model.addAttribute("cliente", RegistroCliente); 
         }
 
-        return "RegistroCliente"; 
+        return "/registro/RegistroCliente"; 
     }
 
 
@@ -91,7 +91,7 @@ public class ClienteController {
 	public String mostrarFormularioRegistroCliente(Model model) {
 
 		model.addAttribute("cliente", new Cliente());
-		return "RegistroCliente";
+		return "/registro/RegistroCliente";
 	}
 
 }

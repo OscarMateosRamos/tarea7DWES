@@ -50,7 +50,7 @@ public class MainController {
 
 		if (usuario == null || password == null || usuario.trim().isEmpty() || password.trim().isEmpty()) {
 			model.addAttribute("error", "Por favor, ingrese ambos campos.");
-			return "formularioLogin";
+			return "/log/formularioLogin";
 		}
 
 		System.out.println("Usuario recibido: " + usuario);
@@ -59,13 +59,13 @@ public class MainController {
 		Credenciales credencial = servCredenciales.buscarCredencialPorUsuario(usuario);
 		if (credencial == null) {
 			model.addAttribute("error", "Credenciales incorrectas");
-			return "formularioLogin";
+			return "/log/formularioLogin";
 		}
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		if (!passwordEncoder.matches(password, credencial.getPassword())) {
 			model.addAttribute("error", "Credenciales incorrectas");
-			return "formularioLogin";
+			return "/log/formularioLogin";
 		}
 
 		ArrayList<CestaCompra> lista = new ArrayList<CestaCompra>();
@@ -89,7 +89,9 @@ public class MainController {
 			return "/personal/MenuPersonal";
 		case "cliente":
 			System.out.println("--Bienvenido Cliente--");
-			return "/cliente/RealizarPedido";
+			lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+			usuario = (String) session.getAttribute("usuario");
+			return "/RealizarPedido";
 		default:
 			System.out.println("--Rol no reconocido--");
 			model.addAttribute("error", "Rol no reconocido.");
