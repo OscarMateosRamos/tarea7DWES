@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Pedido;
+import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.servicios.ServiciosCestaCompra;
 import com.oscar.vivero.servicios.ServiciosCliente;
 import com.oscar.vivero.servicios.ServiciosCredenciales;
@@ -41,6 +42,7 @@ public class ConfirmarPedidoController {
 	@Autowired
 	private ServiciosCredenciales credencialesserv;
 
+	//Confirmar ...
 	@PostMapping("/HacerPedido")
 	public String HacerPedido(HttpSession session, Model model) {
 //Añadir un nuevo Pedido
@@ -48,18 +50,13 @@ public class ConfirmarPedidoController {
 		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
 
 		Pedido p = new Pedido();
-
 		p.setCliente(clienteserv.buscarClientePorId(credencialesserv.buscarCredencialPorUsuario(usuario).getId()));
-		
 		p.setFecha(Date.valueOf(LocalDate.now()));
-		
-	
 		
 		if (lista != null && usuario != null) {
 			lista.removeIf(item -> item.getUsuario().equals(usuario));
 			// lista.removeIf(item -> item.getCodigoPlanta().equals(codigo));
 			session.setAttribute("lista", lista);
-
 		}
 
 //		// De la tabla Cesta Compra para que controla todas las cestas
@@ -71,12 +68,17 @@ public class ConfirmarPedidoController {
 		}
 
 		for (CestaCompra item : cestaCompra) {
-
 			if (item.getUsuario().equalsIgnoreCase(usuario)) {
 				cestaserv.eliminarDeCesta(item.getCodigoPlanta(), usuario);
 			}
+			
+			//plantaserv.actualizarCantidadDisponible(item.getCodigoPlanta(), disponible-1);
 		}
 
+//		ArrayList<Planta> plantas= plantaserv.vertodasPlantas();
+//		
+		
+		
 		model.addAttribute("mensaje", "Pedido realizado con éxito.");
 		return "/cliente/RealizarPedido";
 	}

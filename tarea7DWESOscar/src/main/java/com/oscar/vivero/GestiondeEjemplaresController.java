@@ -1,19 +1,33 @@
 package com.oscar.vivero;
 
 import org.springframework.stereotype.Controller;
-
 import org.springframework.web.bind.annotation.GetMapping;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class GestiondeEjemplaresController {
 	@GetMapping({ "GestiondeEjemplares" })
 	public String GestiondeEjemplares() {
+
 		return "/personal/GestiondeEjemplares";
 
 	}
 
 	@GetMapping("/GestiondeEjemplaresMenuAdmin")
-	public String mostrarMenuAdminEjemplares() {
-		return "/admin/MenuAdmin";
+	public String mostrarMenuAdminEjemplares(HttpSession session) {
+		String rol = (String) session.getAttribute("rol");
+		System.out.println("ROL: " + rol);
+
+		if (rol.equalsIgnoreCase("admin")) {
+			return "/admin/MenuAdmin";
+		} else {
+			if (rol.equalsIgnoreCase("personal")) {
+				return "/personal/MenuPersonal";
+			} else {
+				return "/inicio";
+			}
+		}
+
 	}
 }

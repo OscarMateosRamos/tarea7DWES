@@ -45,7 +45,6 @@ public class PedidoController {
 
 		for (Planta planta : plantas) {
 			long enCesta = 0;
-
 			long cantidadDisponible = planta.getEjemplares().stream().filter(Ejemplar::isDisponible).count();
 
 			if (lista != null) {
@@ -55,9 +54,6 @@ public class PedidoController {
 					}
 				}
 			}
-
-			;
-
 			planta.setCantidadDisponible((int) (cantidadDisponible - enCesta));
 		}
 
@@ -105,9 +101,7 @@ public class PedidoController {
 			c.setCantidad(cantidad);
 			lista.add(c);
 			servCesta.insertarCesta(c);
-
 		}
-
 		session.setAttribute("lista", lista);
 		model.addAttribute("success", "Producto añadido a la cesta con éxito.");
 

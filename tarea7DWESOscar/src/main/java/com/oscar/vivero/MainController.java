@@ -23,18 +23,26 @@ public class MainController {
 	ServiciosCredenciales servCredenciales;
 
 	@GetMapping({ "/", "inicio" })
-	public String MenuInvitado() {
+	public String MenuInvitado(Model model, HttpSession session) {
+//		String usuario = (String) session.getAttribute("usuario");
+//		System.out.println("Sesion del usuario "+ usuario +".");
 		return "inicio";
 	}
 
 	@GetMapping("/MenuPersonal")
-	public String mostrarMenuPersonal() {
+	public String mostrarMenuPersonal(Model model, HttpSession session) {
+
 		return "/personal/MenuPersonal";
 	}
 
 	@GetMapping("/MenuAdmin")
 	public String mostrarMenuAdmin() {
-		return "MenuAdmin";
+		return "/admin/MenuAdmin";
+	}
+
+	@GetMapping("/MenuCliente")
+	public String mostrarMenuCliente() {
+		return "cliente/MenuCliente";
 	}
 
 	@GetMapping("/login")
@@ -89,9 +97,8 @@ public class MainController {
 			return "/personal/MenuPersonal";
 		case "cliente":
 			System.out.println("--Bienvenido Cliente--");
-			lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
-			usuario = (String) session.getAttribute("usuario");
-			return "/RealizarPedido";
+
+			return "/cliente/MenuCliente";
 		default:
 			System.out.println("--Rol no reconocido--");
 			model.addAttribute("error", "Rol no reconocido.");

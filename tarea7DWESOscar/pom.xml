@@ -84,6 +84,11 @@
     	<artifactId>spring-session-jdbc</artifactId>
 	</dependency>
 
+	<dependency>
+		<groupId>com.carritodecompras</groupId>
+		<artifactId>carrito-de-compras</artifactId>
+		<version>1.0 FINAL</version>
+	</dependency>
 	</dependencies>
 
 	<build>
