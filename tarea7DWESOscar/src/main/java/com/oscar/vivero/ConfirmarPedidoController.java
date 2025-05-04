@@ -10,8 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.oscar.vivero.modelo.CestaCompra;
+import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.Pedido;
-import com.oscar.vivero.modelo.Planta;
 import com.oscar.vivero.servicios.ServiciosCestaCompra;
 import com.oscar.vivero.servicios.ServiciosCliente;
 import com.oscar.vivero.servicios.ServiciosCredenciales;
@@ -42,20 +42,29 @@ public class ConfirmarPedidoController {
 	@Autowired
 	private ServiciosCredenciales credencialesserv;
 
-	//Confirmar ...
+	// Confirmar ...
 	@PostMapping("/HacerPedido")
 	public String HacerPedido(HttpSession session, Model model) {
-//Añadir un nuevo Pedido
+		// Añadir un nuevo Pedido
 		String usuario = (String) session.getAttribute("usuario");
 		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
 
+		ArrayList<Ejemplar> ejemplaresPedido = new ArrayList<Ejemplar>();
+
 		Pedido p = new Pedido();
-		p.setCliente(clienteserv.buscarClientePorId(credencialesserv.buscarCredencialPorUsuario(usuario).getId()));
-		p.setFecha(Date.valueOf(LocalDate.now()));
+//		
+//		p.setCliente(clienteserv.buscarClientePorIdCredencial(credencialesserv.buscarCredencialPorUsuario(usuario).getId()));
+//		
+		System.out.println("Id del cliente"+credencialesserv.buscarCredencialPorUsuario(usuario).getId());
 		
+		System.out.println("Id del cliente"+clienteserv.buscarClientePorIdCredencial(credencialesserv.buscarCredencialPorUsuario(usuario).getId()));
+		
+		System.out.println("Id del cliente"+credencialesserv.buscarCredencialPorUsuario(usuario).getId());
+		p.setFecha(Date.valueOf(LocalDate.now()));
+
 		if (lista != null && usuario != null) {
 			lista.removeIf(item -> item.getUsuario().equals(usuario));
-			// lista.removeIf(item -> item.getCodigoPlanta().equals(codigo));
+//			 lista.removeIf(item -> item.getCodigoPlanta().equals(codigo));
 			session.setAttribute("lista", lista);
 		}
 
@@ -71,14 +80,29 @@ public class ConfirmarPedidoController {
 			if (item.getUsuario().equalsIgnoreCase(usuario)) {
 				cestaserv.eliminarDeCesta(item.getCodigoPlanta(), usuario);
 			}
-			
-			//plantaserv.actualizarCantidadDisponible(item.getCodigoPlanta(), disponible-1);
-		}
 
-//		ArrayList<Planta> plantas= plantaserv.vertodasPlantas();
-//		
-		
-		
+			plantaserv.actualizarCantidadDisponible(plantaserv.buscarPlantaPorCodigo(item.getCodigoPlanta()),
+					(int) (plantaserv.buscarPlantaPorCodigo(item.getCodigoPlanta()).getCantidadDisponible()
+							- item.getCantidad()));
+
+			java.util.List<Ejemplar> ejemplaresDisp = ejemplarserv
+					.obtenerEjemplaresDisponiblesPorPlanta(item.getCodigoPlanta());
+
+			for (int i = 0; i < item.getCantidad(); i++) {
+
+				System.out.println("Ejemplar: " + ejemplaresDisp.get(i).getNombre());
+
+				ejemplaresDisp.get(i).setDisponible(false);
+
+				ejemplaresPedido.add(ejemplaresDisp.get(i));
+
+				ejemplarserv.actualizarEjemplarAlRealizarPedido(ejemplaresDisp.get(i), "Pedido realizado");
+			}
+		}
+		p.setEjemplares(ejemplaresPedido);
+
+		pedidoserv.insertar(p);
+
 		model.addAttribute("mensaje", "Pedido realizado con éxito.");
 		return "/cliente/RealizarPedido";
 	}

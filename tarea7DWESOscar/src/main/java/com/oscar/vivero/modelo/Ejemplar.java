@@ -39,7 +39,7 @@ public class Ejemplar implements Serializable {
 	private List<Mensaje> mensajes;
 
 	@ManyToOne
-	@JoinColumn(name = "idpedido")
+	@JoinColumn(name = "idPedido")
 	private Pedido pedido;
 
 	public Ejemplar() {

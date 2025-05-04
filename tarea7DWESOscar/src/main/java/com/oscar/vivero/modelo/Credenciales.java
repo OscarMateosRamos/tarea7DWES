@@ -1,8 +1,10 @@
 package com.oscar.vivero.modelo;
 
 import java.io.Serializable;
-
 import java.util.Objects;
+import java.util.Set;
+
+import com.oscar.security.UserRole;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -96,5 +98,7 @@ public class Credenciales implements Serializable {
 	public String toString() {
 		return "Credenciales [id=" + id + ", usuario=" + usuario + ", password=" + password + ", rol=" + rol + "]";
 	}
+
+	
 
 }

@@ -35,7 +35,7 @@ public class Pedido implements Serializable {
 	private Cliente cliente;
 
 	@OneToMany
-	@JoinColumn(name = "ejemplar")
+	@JoinColumn(name = "idEjemplar")
 	private List<Ejemplar> ejemplares;
 
 	@Column(name = "estado")

@@ -104,4 +104,10 @@ public class ServiciosCliente {
 	public Cliente buscarClientePorId(Long id) {
 		return clienterepo.findById(id).orElse(null);
 	}
+
+	public Cliente buscarClientePorIdCredencial(Long id) {
+
+		return clienterepo.findByCredencial(id).orElse(null);
+	}
+
 }

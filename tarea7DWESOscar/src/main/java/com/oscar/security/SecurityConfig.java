@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	 SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 
@@ -44,7 +44,7 @@ public class SecurityConfig {
 	}
 	
 	 @Bean
-   public AuthenticationManager authenticationManager(HttpSecurity http, UserDetailsService uds) throws Exception {
+   public AuthenticationManager authenticationManager(HttpSecurity http, CustomUserDetailsService uds) throws Exception {
        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
        authBuilder.userDetailsService(uds).passwordEncoder(passwordEncoder());
        return authBuilder.build();

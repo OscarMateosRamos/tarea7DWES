@@ -14,18 +14,16 @@ public class ServiciosCredenciales {
 	@Autowired
 	private CredencialRepository credencialrepo;
 
-	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // Añadido para cifrado de contraseñas
+	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	 public void insertarCredencial(Credenciales c) {
-	        // Cifra la contraseña antes de guardar
-	        String passwordCifrada = passwordEncoder.encode(c.getPassword());
-	        
-	        // Establece la contraseña cifrada en la credencial
-	        c.setPassword(passwordCifrada);
+	public void insertarCredencial(Credenciales c) {
 
-	        // Guarda la credencial con la contraseña cifrada
-	        credencialrepo.saveAndFlush(c);
-	    }
+		String passwordCifrada = passwordEncoder.encode(c.getPassword());
+
+		c.setPassword(passwordCifrada);
+
+		credencialrepo.saveAndFlush(c);
+	}
 
 	public boolean validarUsuarioPassword(Credenciales c) {
 		if (c.getUsuario().isEmpty() || c.getPassword().isEmpty()) {
@@ -39,7 +37,6 @@ public class ServiciosCredenciales {
 		return credencialrepo.findByUsuario(usuario);
 	}
 
-	// Método actualizado para comparar contraseñas cifradas
 	public boolean verificaUsuario(String usuario, String password) {
 		Credenciales cred = credencialrepo.findByUsuario(usuario);
 		return cred != null && passwordEncoder.matches(password, cred.getPassword()); // Comparación segura
@@ -49,14 +46,14 @@ public class ServiciosCredenciales {
 		Credenciales c = credencialrepo.findByUsuario(usuario);
 		if (c != null) {
 			c.setRol(rol);
-			insertarCredencial(c); // Actualizamos la credencial
+			insertarCredencial(c);
 		} else {
 			System.out.println("Usuario no encontrado.");
 		}
 	}
 
-	// Método optimizado: consulta directa en la base de datos
+	
 	public boolean existeCredencial(String usuario) {
-		return credencialrepo.existsByUsuario(usuario); // Método optimizado en el repositorio
+		return credencialrepo.existsByUsuario(usuario); 
 	}
 }
