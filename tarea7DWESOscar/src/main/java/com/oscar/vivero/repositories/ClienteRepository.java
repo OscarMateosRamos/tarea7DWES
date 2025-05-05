@@ -9,7 +9,9 @@ import com.oscar.vivero.modelo.Cliente;
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 	boolean existsByEmail(String email);
 
-//	Optional<Cliente> findByIdCredencial(Long idCredencial);
+	
+
+
 
 
 

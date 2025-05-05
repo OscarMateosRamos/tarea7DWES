@@ -2,6 +2,7 @@ package com.oscar.vivero.modelo;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,27 +32,20 @@ public class Pedido implements Serializable {
 	private Date fecha;
 
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "cliente_id")
+	@JoinColumn(name = "cliente")
 	private Cliente cliente;
-//
+
 //	@OneToMany
 //	@JoinColumn(name = "idEjemplar")
 //	private List<Ejemplar> ejemplares;
 
-	@Column(name = "estado")
-	private String estado;
+	@Column
+	private long idCliente;
 
 	public Pedido() {
 		super();
 	}
 
-	public Pedido(Long id, Date fecha, Cliente cliente, String estado) {
-		super();
-		this.id = id;
-		this.fecha = fecha;
-		this.cliente = cliente;
-		this.estado = estado;
-	}
 
 	public Long getId() {
 		return id;
@@ -77,17 +71,17 @@ public class Pedido implements Serializable {
 		this.cliente = cliente;
 	}
 
-	public String getEstado() {
-		return estado;
+	public long getIdCliente() {
+		return idCliente;
 	}
 
-	public void setEstado(String estado) {
-		this.estado = estado;
+	public void setIdCliente(long idCliente) {
+		this.idCliente = idCliente;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cliente, estado, fecha, id);
+		return Objects.hash(cliente, fecha, id, idCliente);
 	}
 
 	@Override
@@ -99,13 +93,13 @@ public class Pedido implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Pedido other = (Pedido) obj;
-		return Objects.equals(cliente, other.cliente) && Objects.equals(estado, other.estado)
-				&& Objects.equals(fecha, other.fecha) && Objects.equals(id, other.id);
+		return Objects.equals(cliente, other.cliente) && Objects.equals(fecha, other.fecha)
+				&& Objects.equals(id, other.id) && idCliente == other.idCliente;
 	}
 
 	@Override
 	public String toString() {
-		return "Pedido [id=" + id + ", fecha=" + fecha + ", cliente=" + cliente + ", estado=" + estado + "]";
+		return "Pedido [id=" + id + ", fecha=" + fecha + ", cliente=" + cliente + ", idCliente=" + idCliente + "]";
 	}
 
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Credenciales;
+import com.oscar.vivero.modelo.LineaPedido;
 import com.oscar.vivero.servicios.ServiciosCredenciales;
 
 import jakarta.servlet.http.HttpSession;
@@ -76,8 +77,9 @@ public class MainController {
 			return "/log/formularioLogin";
 		}
 
-		ArrayList<CestaCompra> lista = new ArrayList<CestaCompra>();
-
+		ArrayList<LineaPedido> lista = new ArrayList<LineaPedido>();
+		
+		
 		String rol = credencial.getRol();
 		System.out.println("Rol recibido: " + rol);
 

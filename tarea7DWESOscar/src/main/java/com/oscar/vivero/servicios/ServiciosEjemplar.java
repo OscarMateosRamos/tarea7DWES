@@ -70,7 +70,7 @@ public class ServiciosEjemplar {
 
 		Planta planta = ej.getPlanta();
 		planta.setCantidadDisponible(planta.getCantidadDisponible() + 1);
-		
+
 		servPlanta.modificarPlanta(planta);
 
 		servMensaje.insertar(m);
@@ -79,6 +79,11 @@ public class ServiciosEjemplar {
 	@Transactional
 	public List<Ejemplar> listaejemplaresPorTipoPlanta(String codigo) {
 		return ejemplarrepo.ejemplaresPorTipoPlanta(codigo);
+	}
+
+	@Transactional
+	public void modificarEjemplar(Ejemplar ej) {
+		ejemplarrepo.saveAndFlush(ej);
 	}
 
 	@Transactional

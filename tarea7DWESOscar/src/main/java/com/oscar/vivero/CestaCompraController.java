@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Ejemplar;
+import com.oscar.vivero.modelo.LineaPedido;
 import com.oscar.vivero.servicios.ServiciosEjemplar;
 import com.oscar.vivero.servicios.ServiciosPedido;
 import com.oscar.vivero.servicios.ServiciosPlanta;
@@ -25,15 +26,13 @@ public class CestaCompraController {
 
 	@Autowired
 	private ServiciosPlanta servPlanta;
-
 	
 	@Autowired
 	private ServiciosEjemplar servEjemplar;
 
 	@GetMapping("/CestaCompra")
 	public String mostrarCesta(HttpSession session, Model model) {
-
-		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+		ArrayList<LineaPedido> lista = (ArrayList<LineaPedido>) session.getAttribute("lista");
 
 		if (lista == null || lista.isEmpty()) {
 			model.addAttribute("mensaje", "Tu cesta está vacía.");
@@ -46,30 +45,27 @@ public class CestaCompraController {
 
 	@GetMapping("/retirarDeCesta/{codigoPlanta}")
 	public String retirarDeCesta(@PathVariable("codigoPlanta") String codigo, HttpSession session, Model model) {
-
-		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+		ArrayList<LineaPedido> lista = (ArrayList<LineaPedido>) session.getAttribute("lista");
 		String usuario = (String) session.getAttribute("usuario");
 
 		if (lista != null && usuario != null) {
-
 			lista.removeIf(item -> item.getCodigoPlanta().equals(codigo));
 			session.setAttribute("lista", lista);
-
 		}
-
-		return "/cliente/CestaCompra";
+		
+		return "redirect:/CestaCompra";
 	}
 
 	@GetMapping("/ConfirmarPedido")
 	public String confirmarPedido(HttpSession session, Model model) {
-
 		String usuario = (String) session.getAttribute("usuario");
+		
 		if (usuario == null) {
 			model.addAttribute("error", "Debes estar autenticado para realizar un pedido.");
 			return "login";
 		}
 
-		ArrayList<CestaCompra> cestaCompra = (ArrayList<CestaCompra>) session.getAttribute("lista");
+		ArrayList<LineaPedido> cestaCompra = (ArrayList<LineaPedido>) session.getAttribute("lista");
 
 		if (cestaCompra == null || cestaCompra.isEmpty()) {
 			model.addAttribute("mensaje", "No tienes productos en la cesta para confirmar.");
@@ -78,7 +74,7 @@ public class CestaCompraController {
 
 		List<Ejemplar> ejemplaresSeleccionados = new ArrayList<>();
 
-		for (CestaCompra item : cestaCompra) {
+		for (LineaPedido item : cestaCompra) {
 
 			List<Ejemplar> ejemplaresDisponibles = servEjemplar
 					.obtenerEjemplaresDisponiblesPorPlanta(item.getCodigoPlanta());
@@ -96,7 +92,7 @@ public class CestaCompraController {
 
 		model.addAttribute("lista", cestaCompra);
 
-		return "ConfirmarPedido";
+		return "/cliente/ConfirmarPedido";
 	}
 
 }

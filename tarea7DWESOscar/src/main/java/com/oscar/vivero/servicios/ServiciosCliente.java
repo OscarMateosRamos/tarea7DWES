@@ -105,9 +105,13 @@ public class ServiciosCliente {
 		return clienterepo.findById(id).orElse(null);
 	}
 
-//	public Cliente buscarClientePorIdCredencial(Long idCredencial) {
-//	    return clienterepo.findByIdCredencial(idCredencial)
-//	            .orElse(null);
-//	}
+	public Cliente buscarClientePorIdCredencial(Long idCredencial) {
+		for (Cliente c : clienterepo.findAll()) {
+			if (c.getCredencial().getId().equals(idCredencial)) {
+				return c;
+			}
+		}
+		return null;
+	}
 
 }
