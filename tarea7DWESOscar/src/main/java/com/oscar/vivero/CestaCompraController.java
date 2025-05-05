@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Ejemplar;
-import com.oscar.vivero.servicios.ServiciosCestaCompra;
 import com.oscar.vivero.servicios.ServiciosEjemplar;
 import com.oscar.vivero.servicios.ServiciosPedido;
 import com.oscar.vivero.servicios.ServiciosPlanta;
@@ -27,9 +26,7 @@ public class CestaCompraController {
 	@Autowired
 	private ServiciosPlanta servPlanta;
 
-	@Autowired
-	private ServiciosCestaCompra servCesta;
-
+	
 	@Autowired
 	private ServiciosEjemplar servEjemplar;
 
@@ -58,7 +55,6 @@ public class CestaCompraController {
 			lista.removeIf(item -> item.getCodigoPlanta().equals(codigo));
 			session.setAttribute("lista", lista);
 
-			servCesta.eliminarDeCesta(codigo, usuario);
 		}
 
 		return "/cliente/CestaCompra";

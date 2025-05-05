@@ -43,12 +43,12 @@ public class SecurityConfig {
 		return http.build();
 	}
 	
-	 @Bean
-   public AuthenticationManager authenticationManager(HttpSecurity http, CustomUserDetailsService uds) throws Exception {
-       AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-       authBuilder.userDetailsService(uds).passwordEncoder(passwordEncoder());
-       return authBuilder.build();
-   }
+//	 @Bean
+//   public AuthenticationManager authenticationManager(HttpSecurity http, CustomUserDetailsService uds) throws Exception {
+//       AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+//       authBuilder.userDetailsService(uds).passwordEncoder(passwordEncoder());
+//       return authBuilder.build();
+//   }
 
 	@Bean
 	PasswordEncoder passwordEncoder() {

@@ -29,4 +29,11 @@ public class GestiondeMensajesController {
 		}
 
 	}
+
+	@GetMapping("/MenuFiltradoMensajes")
+	public String filtradodeMensajes() {
+		return "/personal/MenuFiltradoMensajes";
+
+	}
+
 }

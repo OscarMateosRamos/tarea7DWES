@@ -9,103 +9,92 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.Planta;
-import com.oscar.vivero.servicios.ServiciosCestaCompra;
 import com.oscar.vivero.servicios.ServiciosEjemplar;
 import com.oscar.vivero.servicios.ServiciosPedido;
 import com.oscar.vivero.servicios.ServiciosPlanta;
 
 import jakarta.servlet.http.HttpSession;
 
-@SessionAttributes("cestaCompra")
 @Controller
 public class PedidoController {
 
-	@Autowired
-	private ServiciosPedido servPedido;
+    @Autowired
+    private ServiciosPedido servPedido;
 
-	@Autowired
-	private ServiciosEjemplar servEjemplar;
-	@Autowired
-	private ServiciosPlanta servPlanta;
+    @Autowired
+    private ServiciosEjemplar servEjemplar;
 
-	@Autowired
-	private ServiciosCestaCompra servCesta;
+    @Autowired
+    private ServiciosPlanta servPlanta;
 
-	@GetMapping("/RealizarPedido")
-	public String mostrarRealizarPedido(HttpSession session, Model model) {
+    @GetMapping("/RealizarPedido")
+    public String mostrarRealizarPedido(HttpSession session, Model model) {
+        List<Planta> plantas = servPlanta.obtenerPlantasConEjemplares();
+        List<CestaCompra> lista = (List<CestaCompra>) session.getAttribute("lista");
+        String usuario = (String) session.getAttribute("usuario");
 
-		List<Planta> plantas = servPlanta.obtenerPlantasConEjemplares();
-		List<CestaCompra> lista = servCesta.verCestaCompra();
-		String usuario = (String) session.getAttribute("usuario");
+        for (Planta planta : plantas) {
+            long enCesta = 0;
+            long cantidadDisponible = planta.getEjemplares().stream().filter(Ejemplar::isDisponible).count();
 
-		for (Planta planta : plantas) {
-			long enCesta = 0;
-			long cantidadDisponible = planta.getEjemplares().stream().filter(Ejemplar::isDisponible).count();
+            if (lista != null) {
+                for (CestaCompra cestaCompra : lista) {
+                    if (cestaCompra.getCodigoPlanta().equalsIgnoreCase(planta.getCodigo())) {
+                        enCesta += cestaCompra.getCantidad();
+                    }
+                }
+            }
+            planta.setCantidadDisponible((int) (cantidadDisponible - enCesta));
+        }
 
-			if (lista != null) {
-				for (CestaCompra cestaCompra : lista) {
-					if (cestaCompra.getCodigoPlanta().equalsIgnoreCase(planta.getCodigo())) {
-						enCesta += cestaCompra.getCantidad();
-					}
-				}
-			}
-			planta.setCantidadDisponible((int) (cantidadDisponible - enCesta));
-		}
+        model.addAttribute("plantas", plantas);
+        model.addAttribute("usuario", usuario);
+        return "/cliente/RealizarPedido";
+    }
 
-		// Cargar datos al modelo
-		CestaCompra cestaCompra = new CestaCompra();
-		model.addAttribute("plantas", plantas);
-		model.addAttribute("pedido", cestaCompra);
-		model.addAttribute("usuario", usuario);
+    @PostMapping("/añadirACesta")
+    public String añadirACesta(@RequestParam("codigo") String codigo, @RequestParam("cantidad") int cantidad,
+                               HttpSession session, Model model) {
 
-		return "/cliente/RealizarPedido";
-	}
+        if (cantidad <= 0) {
+            model.addAttribute("error", "La cantidad debe ser mayor que cero.");
+            return "redirect:/RealizarPedido";
+        }
 
-	@PostMapping("/añadirACesta")
-	public String añadirACesta(@RequestParam("codigo") String codigo, @RequestParam("cantidad") int cantidad,
-			HttpSession session, Model model) {
+        ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+        if (lista == null) {
+            lista = new ArrayList<>();
+        }
 
-		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
+        String usuario = (String) session.getAttribute("usuario");
+        if (usuario == null) {
+            model.addAttribute("error", "Debes estar autenticado para añadir productos a la cesta.");
+            return "login";
+        }
 
-		if (lista == null) {
-			lista = new ArrayList<>();
-		}
+        boolean existe = false;
+        for (CestaCompra item : lista) {
+            if (item.getCodigoPlanta().equals(codigo)) {
+                item.setCantidad(item.getCantidad() + cantidad);
+                existe = true;
+                break;
+            }
+        }
 
-		String usuario = (String) session.getAttribute("usuario");
+        if (!existe) {
+            CestaCompra c = new CestaCompra();
+            c.setCodigoPlanta(codigo);
+            c.setCantidad(cantidad);
+            lista.add(c);
+        }
 
-		if (usuario == null) {
-			model.addAttribute("error", "Debes estar autenticado para añadir productos a la cesta.");
-			return "login";
-		}
+        session.setAttribute("lista", lista);
+        model.addAttribute("success", "Producto añadido a la cesta con éxito.");
 
-		boolean existe = false;
-
-		for (CestaCompra item : lista) {
-			if (item.getCodigoPlanta().equals(codigo)) {
-				existe = true;
-				item.setCantidad(item.getCantidad() + cantidad);
-				servCesta.actualizarCesta(item);
-				break;
-			}
-		}
-
-		if (!existe) {
-			CestaCompra c = new CestaCompra();
-			c.setCodigoPlanta(codigo);
-			c.setUsuario(usuario);
-			c.setCantidad(cantidad);
-			lista.add(c);
-			servCesta.insertarCesta(c);
-		}
-		session.setAttribute("lista", lista);
-		model.addAttribute("success", "Producto añadido a la cesta con éxito.");
-
-		return "redirect:/CestaCompra";
-	}
-
+        return "redirect:/CestaCompra";
+    }
 }

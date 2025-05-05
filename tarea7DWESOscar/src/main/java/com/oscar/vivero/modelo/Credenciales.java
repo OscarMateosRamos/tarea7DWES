@@ -2,9 +2,6 @@ package com.oscar.vivero.modelo;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
-
-import com.oscar.security.UserRole;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

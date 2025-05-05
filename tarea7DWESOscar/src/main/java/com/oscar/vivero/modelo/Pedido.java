@@ -33,10 +33,10 @@ public class Pedido implements Serializable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cliente_id")
 	private Cliente cliente;
-
-	@OneToMany
-	@JoinColumn(name = "idEjemplar")
-	private List<Ejemplar> ejemplares;
+//
+//	@OneToMany
+//	@JoinColumn(name = "idEjemplar")
+//	private List<Ejemplar> ejemplares;
 
 	@Column(name = "estado")
 	private String estado;
@@ -45,12 +45,11 @@ public class Pedido implements Serializable {
 		super();
 	}
 
-	public Pedido(Long id, Date fecha, Cliente cliente, List<Ejemplar> ejemplares, String estado) {
+	public Pedido(Long id, Date fecha, Cliente cliente, String estado) {
 		super();
 		this.id = id;
 		this.fecha = fecha;
 		this.cliente = cliente;
-		this.ejemplares = ejemplares;
 		this.estado = estado;
 	}
 
@@ -76,14 +75,6 @@ public class Pedido implements Serializable {
 
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
-	}
-
-	public List<Ejemplar> getEjemplares() {
-		return ejemplares;
-	}
-
-	public void setEjemplares(List<Ejemplar> ejemplares) {
-		this.ejemplares = ejemplares;
 	}
 
 	public String getEstado() {

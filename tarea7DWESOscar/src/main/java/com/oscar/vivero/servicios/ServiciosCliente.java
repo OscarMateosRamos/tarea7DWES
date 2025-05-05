@@ -105,9 +105,9 @@ public class ServiciosCliente {
 		return clienterepo.findById(id).orElse(null);
 	}
 
-	public Cliente buscarClientePorIdCredencial(Long id) {
-
-		return clienterepo.findByCredencial(id).orElse(null);
-	}
+//	public Cliente buscarClientePorIdCredencial(Long idCredencial) {
+//	    return clienterepo.findByIdCredencial(idCredencial)
+//	            .orElse(null);
+//	}
 
 }
