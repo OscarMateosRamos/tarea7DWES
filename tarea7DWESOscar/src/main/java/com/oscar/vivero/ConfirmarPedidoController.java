@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.oscar.vivero.modelo.CestaCompra;
 import com.oscar.vivero.modelo.Cliente;
 import com.oscar.vivero.modelo.Ejemplar;
 import com.oscar.vivero.modelo.LineaPedido;
@@ -42,70 +41,6 @@ public class ConfirmarPedidoController {
 	@Autowired
 	private ServiciosCredenciales credencialesserv;
 
-	// Confirmar ...
-//	@PostMapping("/HacerPedido")
-//	public String HacerPedido(HttpSession session, Model model) {
-//		// Añadir un nuevo Pedido
-//		String usuario = (String) session.getAttribute("usuario");
-//		ArrayList<CestaCompra> lista = (ArrayList<CestaCompra>) session.getAttribute("lista");
-//
-//		ArrayList<Ejemplar> ejemplaresPedido = new ArrayList<Ejemplar>();
-//
-//		Pedido p = new Pedido();
-////		
-////		p.setCliente(clienteserv.buscarClientePorIdCredencial(credencialesserv.buscarCredencialPorUsuario(usuario).getId()));
-////		
-//		System.out.println("Id del cliente"+credencialesserv.buscarCredencialPorUsuario(usuario).getId());
-//		
-//		System.out.println("Id del cliente"+clienteserv.buscarClientePorIdCredencial(credencialesserv.buscarCredencialPorUsuario(usuario).getId()));
-//		
-//		System.out.println("Id del cliente"+credencialesserv.buscarCredencialPorUsuario(usuario).getId());
-//		p.setFecha(Date.valueOf(LocalDate.now()));
-//
-//		if (lista != null && usuario != null) {
-//			lista.removeIf(item -> item.getUsuario().equals(usuario));
-////			 lista.removeIf(item -> item.getCodigoPlanta().equals(codigo));
-//			session.setAttribute("lista", lista);
-//		}
-//
-////		// De la tabla Cesta Compra para que controla todas las cestas
-//		ArrayList<CestaCompra> cestaCompra = (ArrayList<CestaCompra>) cestaserv.verCestaCompra();
-//
-//		if (cestaCompra == null || cestaCompra.isEmpty()) {
-//			model.addAttribute("mensaje", "No tienes productos en la cesta para realizar un pedido.");
-//			return "/cliente/RealizarPedido";
-//		}
-//
-//		for (CestaCompra item : cestaCompra) {
-//			if (item.getUsuario().equalsIgnoreCase(usuario)) {
-//				cestaserv.eliminarDeCesta(item.getCodigoPlanta(), usuario);
-//			}
-//
-//			plantaserv.actualizarCantidadDisponible(plantaserv.buscarPlantaPorCodigo(item.getCodigoPlanta()),
-//					(int) (plantaserv.buscarPlantaPorCodigo(item.getCodigoPlanta()).getCantidadDisponible()
-//							- item.getCantidad()));
-//
-//			java.util.List<Ejemplar> ejemplaresDisp = ejemplarserv
-//					.obtenerEjemplaresDisponiblesPorPlanta(item.getCodigoPlanta());
-//
-//			for (int i = 0; i < item.getCantidad(); i++) {
-//
-//				System.out.println("Ejemplar: " + ejemplaresDisp.get(i).getNombre());
-//
-//				ejemplaresDisp.get(i).setDisponible(false);
-//
-//				ejemplaresPedido.add(ejemplaresDisp.get(i));
-//
-//				ejemplarserv.actualizarEjemplarAlRealizarPedido(ejemplaresDisp.get(i), "Pedido realizado");
-//			}
-//		}
-//		p.setEjemplares(ejemplaresPedido);
-//
-//		pedidoserv.insertar(p);
-//
-//		model.addAttribute("mensaje", "Pedido realizado con éxito.");
-//		return "/cliente/RealizarPedido";
-//	}
 
 	@PostMapping("/HacerPedido")
 	public String HacerPedido(HttpSession session, Model model) {
@@ -166,30 +101,6 @@ public class ConfirmarPedidoController {
 		session.removeAttribute("lista");
 		model.addAttribute("mensaje", "Pedido realizado con éxito.");
 		return "/cliente/RealizarPedido";
-	}
-
-	private List<Ejemplar> procesarEjemplaresDelItem(CestaCompra item, Model model) {
-		List<Ejemplar> ejemplaresDisponibles = ejemplarserv
-				.obtenerEjemplaresDisponiblesPorPlanta(item.getCodigoPlanta());
-
-		if (ejemplaresDisponibles.size() < item.getCantidad()) {
-			model.addAttribute("mensaje",
-					"No hay suficientes ejemplares disponibles para la planta " + item.getCodigoPlanta() + ".");
-			return null;
-		}
-
-		List<Ejemplar> ejemplaresProcesados = new ArrayList<>();
-		for (int i = 0; i < item.getCantidad(); i++) {
-			Ejemplar ejemplar = ejemplaresDisponibles.get(i);
-			ejemplar.setDisponible(false);
-			ejemplarserv.actualizarEjemplarAlRealizarPedido(ejemplar, "Pedido realizado");
-			ejemplaresProcesados.add(ejemplar);
-		}
-
-		Planta planta = plantaserv.buscarPlantaPorCodigo(item.getCodigoPlanta());
-		plantaserv.actualizarCantidadDisponible(planta, (int) (planta.getCantidadDisponible() - item.getCantidad()));
-
-		return ejemplaresProcesados;
 	}
 
 }
