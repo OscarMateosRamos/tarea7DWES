@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.oscar.vivero.modelo.Credenciales;
 import com.oscar.vivero.modelo.LineaPedido;
@@ -17,6 +18,7 @@ import com.oscar.vivero.servicios.ServiciosCredenciales;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+
 public class MainController {
 
 	@Autowired
@@ -77,8 +79,7 @@ public class MainController {
 		}
 
 		ArrayList<LineaPedido> lista = new ArrayList<LineaPedido>();
-		
-		
+
 		String rol = credencial.getRol();
 		System.out.println("Rol recibido: " + rol);
 
@@ -98,7 +99,6 @@ public class MainController {
 			return "/personal/MenuPersonal";
 		case "cliente":
 			System.out.println("--Bienvenido Cliente--");
-
 			return "/cliente/MenuCliente";
 		default:
 			System.out.println("--Rol no reconocido--");

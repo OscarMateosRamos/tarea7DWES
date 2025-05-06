@@ -36,6 +36,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 		
 		if (optionalCredencial.isPresent()) {
 			session.setAttribute(username, optionalCredencial.get().getUsuario());
+		
 			
 			return User.builder()
 					.username(optionalCredencial.get().getUsuario())
@@ -48,6 +49,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 			
 			throw new UsernameNotFoundException("Usuario no encontrado");
 		}
+		
 		
 		
 	}
