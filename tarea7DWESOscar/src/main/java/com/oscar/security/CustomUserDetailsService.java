@@ -17,40 +17,30 @@ import jakarta.servlet.http.HttpSession;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-	private final ServiciosCredenciales credencialesService;
+	@Autowired
+	ServiciosCredenciales credencialesService;
 
 	@Autowired
 	HttpSession session;
 
-	public CustomUserDetailsService(ServiciosCredenciales credencialesService) {
-		this.credencialesService = credencialesService;
-	}
-
-	@Override 
+	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		System.out.println("******  USERNAME  ******");
-		
-		Optional<Credenciales>  optionalCredencial = Optional.of(credencialesService.buscarCredencialPorUsuario(username));
-		
+
+		Optional<Credenciales> optionalCredencial = Optional
+				.of(credencialesService.buscarCredencialPorUsuario(username));
 		
 		
 		if (optionalCredencial.isPresent()) {
+			System.out.println("*** USUARIO: "+optionalCredencial.get().getUsuario());
 			session.setAttribute(username, optionalCredencial.get().getUsuario());
-		
-			
-			return User.builder()
-					.username(optionalCredencial.get().getUsuario())
-					.password(optionalCredencial.get().getPassword())
-					.roles(optionalCredencial.get().getRol())
-					.build();
 
-		
-		}else {
-			
+			return User.builder().username(optionalCredencial.get().getUsuario())
+					.password(optionalCredencial.get().getPassword()).roles(optionalCredencial.get().getRol()).build();
+				
+		} else {
+
 			throw new UsernameNotFoundException("Usuario no encontrado");
 		}
-		
-		
-		
+
 	}
 }

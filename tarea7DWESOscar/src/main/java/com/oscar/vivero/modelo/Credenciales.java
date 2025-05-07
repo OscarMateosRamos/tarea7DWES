@@ -1,6 +1,7 @@
 package com.oscar.vivero.modelo;
 
 import java.io.Serializable;
+
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -19,16 +20,16 @@ public class Credenciales implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	
 	@Column(name = "usuario", unique = true)
 	private String usuario;
-
+	
 	@Column(name = "password")
 	private String password;
-
+	
 	@Column(name = "rol")
 	private String rol;
-
+	
 	public Credenciales() {
 
 	}
