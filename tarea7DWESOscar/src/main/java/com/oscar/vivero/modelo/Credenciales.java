@@ -1,7 +1,6 @@
 package com.oscar.vivero.modelo;
 
 import java.io.Serializable;
-
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -20,16 +19,16 @@ public class Credenciales implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(name = "usuario", unique = true)
 	private String usuario;
-	
+
 	@Column(name = "password")
 	private String password;
-	
+
 	@Column(name = "rol")
 	private String rol;
-	
+
 	public Credenciales() {
 
 	}
@@ -41,6 +40,8 @@ public class Credenciales implements Serializable {
 		this.password = password;
 		this.rol = rol;
 	}
+
+	
 
 	public Long getId() {
 		return id;
@@ -76,7 +77,7 @@ public class Credenciales implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, password, rol, usuario);
+		return Objects.hash(id, password, usuario);
 	}
 
 	@Override
@@ -89,7 +90,7 @@ public class Credenciales implements Serializable {
 			return false;
 		Credenciales other = (Credenciales) obj;
 		return Objects.equals(id, other.id) && Objects.equals(password, other.password)
-				&& Objects.equals(rol, other.rol) && Objects.equals(usuario, other.usuario);
+				&& Objects.equals(usuario, other.usuario);
 	}
 
 	@Override

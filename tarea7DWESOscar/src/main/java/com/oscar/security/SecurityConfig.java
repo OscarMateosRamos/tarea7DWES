@@ -1,72 +1,69 @@
 package com.oscar.security;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.oscar.vivero.servicios.ServicioAutenticacion;
+
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
 
-	
-	  @Bean public SecurityFilterChain securityFilterChain(HttpSecurity http)
-	  throws Exception { http.csrf(csrf ->
-	  csrf.disable()).authorizeHttpRequests(auth -> auth
-	  
-	  .requestMatchers("/", "/css/**", "/img/**").permitAll()
-	  .requestMatchers("/log/**", "/registro").permitAll()
-	  
-	  .requestMatchers("/MenuCliente/**").hasRole("CLIENTE").requestMatchers(
-	  "/admin/**").hasRole("ADMIN")
-	  .requestMatchers("/personal/**").hasAnyRole("ADMINISTRADOR", "PERSONAL")
-	  
-	  .anyRequest().permitAll()).formLogin(form ->
-	  form.loginPage("/inicio").loginProcessingUrl("/login")
-	  
-	  .defaultSuccessUrl("/Sesion")
-	  
-	  .failureUrl("/inicio").permitAll()) .logout(logout ->
-	  logout.logoutUrl("/logout").logoutSuccessUrl("/inicio").permitAll())
-	  .exceptionHandling(exception -> exception.accessDeniedPage("/inicio"));
-	  
-	  return http.build(); }
-	 
-
-//	@Bean
-//	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-//
-//		return httpSecurity.csrf(csrf -> csrf.disable())
-//				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
-//				.authorizeHttpRequests(http -> {
-//					http.requestMatchers(HttpMethod.GET, "/inicio").permitAll();
-//					http.requestMatchers(HttpMethod.GET, "/login").permitAll();
-//
-//					http.anyRequest().denyAll();
-//
-//				}).build();
-//
-//	}
-
 	@Bean
-	public AuthenticationManager authenticationManager(HttpSecurity http, CustomUserDetailsService uds)
-			throws Exception {
-		AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-		authBuilder.userDetailsService(uds).passwordEncoder(passwordEncoder());
-		return authBuilder.build();
+	@Order(SecurityProperties.BASIC_AUTH_ORDER)
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+		http.authorizeHttpRequests(auth -> auth
+				.requestMatchers(
+						 "/CSS").permitAll()
+				.requestMatchers("/MenuAdmin").hasRole("ADMIN")
+				.requestMatchers("/cliente/**").hasRole("CLIENTE")
+				.requestMatchers("/personal/**").hasAnyRole("ADMIN", "PERSONAL")
+				.anyRequest().authenticated())
+				.formLogin(login -> login.loginPage("/login").loginProcessingUrl("/Sesion")
+						.defaultSuccessUrl("/redirect", true).failureUrl("/public/login?error=true").permitAll())
+				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/invitado")
+						.invalidateHttpSession(true).deleteCookies("JSESSIONID").permitAll())
+				.sessionManagement(session -> session.maximumSessions(1).expiredUrl("/invitado"))
+				.exceptionHandling(
+						exception -> exception.accessDeniedHandler((request, response, accessDeniedException) -> {
+							request.getSession().setAttribute("prevPage", request.getHeader("Referer"));
+							request.getSession().setAttribute("rol",
+									request.isUserInRole("ADMIN") ? "ADMIN"
+											: request.isUserInRole("PERSONAL") ? "PERSONAL"
+													: request.isUserInRole("CLIENTE") ? "CLIENTE" : "INVITADO");
+							response.sendRedirect("/public/acceso_perfiles");
+						}));
+		return http.build();
 	}
 
 	@Bean
-	PasswordEncoder passwordEncoder() {
+	public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
+			PasswordEncoder passwordEncoder) {
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(userDetailsService);
+		authProvider.setPasswordEncoder(passwordEncoder);
+		return new ProviderManager(authProvider);
+	}
+
+	@Bean
+	public UserDetailsService userDetailsService(ServicioAutenticacion servAutenticacion) {
+		return servAutenticacion;
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 }
