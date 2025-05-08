@@ -1,6 +1,5 @@
 package com.oscar.vivero.servicios;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,17 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.oscar.vivero.modelo.Credenciales;
 import com.oscar.vivero.repositories.CredencialRepository;
 
-import jakarta.servlet.http.HttpServletResponse;
-
 @Service
 public class ServicioAutenticacion implements UserDetailsService {
 
     @Autowired
     private CredencialRepository credencialesRepo;
-
-    public ServicioAutenticacion(CredencialRepository credencialesRepository) {
-        this.credencialesRepo = credencialesRepository;
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -41,55 +34,40 @@ public class ServicioAutenticacion implements UserDetailsService {
             throw new UsernameNotFoundException("Usuario " + username + " no encontrado");
         }
 
-        if (credenciales.getRol() == null) {
-            throw new IllegalStateException("Usuario " + username + " no tiene un rol asignado.");
+        String rol = credenciales.getRol();
+        if (rol == null || rol.trim().isEmpty()) {
+            throw new IllegalStateException("Usuario " + username + " no tiene un rol válido.");
         }
 
-        String roleName = credenciales.getRol().trim();
-        if (roleName.isEmpty()) {
-            throw new IllegalStateException("Usuario " + username + " tiene un rol vacío o nulo.");
-        }
-
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + roleName));
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + rol.trim().toUpperCase()));
         return new User(credenciales.getUsuario(), credenciales.getPassword(), authorities);
     }
 
-  
     public String usuarioAutenticado() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            return ((User) authentication.getPrincipal()).getUsername();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return authentication.getName();
         }
         return null;
     }
 
-
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return (request, response, authentication) -> {
-            try {             
-                redirectUserBasedOnRole(authentication, response);
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                if (authority.getAuthority().equals("ROLE_ADMIN")) {
+                    response.sendRedirect("/admin/MenuAdmin");
+                    return;
+                } else if (authority.getAuthority().equals("ROLE_CLIENTE")) {
+                    response.sendRedirect("/cliente/MenuCliente");
+                    return;
+                } else if (authority.getAuthority().equals("ROLE_PERSONAL")) {
+                    response.sendRedirect("/personal/MenuPersonal");
+                    return;
+                }
             }
+            response.sendRedirect("/inicio");
         };
     }
 
-  
-    private void redirectUserBasedOnRole(Authentication authentication, HttpServletResponse response) throws IOException {
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if (authority.getAuthority().equals("ROLE_ADMIN")) {
-                response.sendRedirect("/admin/MenuAdmin");
-                return;
-            } else if (authority.getAuthority().equals("ROLE_CLIENTE")) {
-                response.sendRedirect("/cliente/MenuCliente");
-                return;
-            } else if (authority.getAuthority().equals("ROLE_PERSONAL")) {
-                response.sendRedirect("/personal/MenuPersonal");
-                return;
-            }
-        }
-      
-        response.sendRedirect("/invitado");
-    }
 }

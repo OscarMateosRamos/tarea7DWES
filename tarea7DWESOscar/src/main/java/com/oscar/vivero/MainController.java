@@ -2,14 +2,13 @@ package com.oscar.vivero;
 
 import java.util.ArrayList;
 
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.oscar.vivero.modelo.Credenciales;
 import com.oscar.vivero.modelo.LineaPedido;
@@ -51,60 +50,36 @@ public class MainController {
 		return "/log/formularioLogin";
 	}
 
-	@PostMapping("/Sesion")
-	public String logInSubmit(@ModelAttribute Credenciales formularioLogin, Model model, HttpSession session) {
-		String usuario = formularioLogin.getUsuario();
-		String password = formularioLogin.getPassword();
+	@GetMapping("/redireccion")
+	public String redireccionPorRol(HttpSession session) {
+		org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		if (usuario == null || password == null || usuario.trim().isEmpty() || password.trim().isEmpty()) {
-			model.addAttribute("error", "Por favor, ingrese ambos campos.");
-			return "/log/formularioLogin";
+		if (auth != null) {
+
+			String username = auth.getName();
+
+			String rol = "";
+			for (GrantedAuthority authority : auth.getAuthorities()) {
+				rol = authority.getAuthority();
+			}
+
+			session.setAttribute("usuario", username);
+			session.setAttribute("rol", rol.replace("ROLE_", "").toLowerCase());
+			session.setAttribute("lista", new ArrayList<LineaPedido>());
+
+			switch (rol) {
+			case "ROLE_ADMIN":
+				return "redirect:/MenuAdmin";
+			case "ROLE_PERSONAL":
+				return "redirect:/MenuPersonal";
+			case "ROLE_CLIENTE":
+				return "redirect:/MenuCliente";
+			default:
+				return "redirect:/login?error=rol";
+			}
 		}
 
-		System.out.println("Usuario recibido: " + usuario);
-		System.out.println("Contraseña recibida: " + password);
-
-		Credenciales credencial = servCredenciales.buscarCredencialPorUsuario(usuario);
-		if (credencial == null) {
-			model.addAttribute("error", "Credenciales incorrectas");
-			return "/log/formularioLogin";
-		}
-
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		if (!passwordEncoder.matches(password, credencial.getPassword())) {
-			model.addAttribute("error", "Credenciales incorrectas");
-			return "/log/formularioLogin";
-		}
-
-		ArrayList<LineaPedido> lista = new ArrayList<LineaPedido>();
-
-		String rol = credencial.getRol();
-		System.out.println("Rol recibido: " + rol);
-		
-		
-		//Autenticacion y permisos
-		session.setAttribute("usuario", usuario);
-		session.setAttribute("rol", rol);
-		session.setAttribute("lista", lista);
-
-		System.out.println("Guardado en la sesión - Usuario: " + usuario);
-		System.out.println("Guardado en la sesión - Rol: " + rol);
-
-		switch (rol.toLowerCase()) {
-		case "admin":
-			System.out.println("--Bienvenido Admin--");
-			return "/admin/MenuAdmin";
-		case "personal":
-			System.out.println("--Bienvenido Personal--");
-			return "/personal/MenuPersonal";
-		case "cliente":
-			System.out.println("--Bienvenido Cliente--");
-			return "/cliente/MenuCliente";
-		default:
-			System.out.println("--Rol no reconocido--");
-			model.addAttribute("error", "Rol no reconocido.");
-			return "/log/formularioLogin";
-		}
+		return "redirect:/login?error=auth";
 	}
 
 	@GetMapping("/logout")
