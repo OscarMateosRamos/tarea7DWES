@@ -80,7 +80,9 @@ public class MainController {
 
 		String rol = credencial.getRol();
 		System.out.println("Rol recibido: " + rol);
-
+		
+		
+		//Autenticacion y permisos
 		session.setAttribute("usuario", usuario);
 		session.setAttribute("rol", rol);
 		session.setAttribute("lista", lista);

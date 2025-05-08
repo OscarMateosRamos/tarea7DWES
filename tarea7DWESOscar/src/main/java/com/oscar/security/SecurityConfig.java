@@ -21,12 +21,12 @@ import com.oscar.vivero.servicios.ServicioAutenticacion;
 public class SecurityConfig {
 
 	@Bean
-	@Order(SecurityProperties.BASIC_AUTH_ORDER)
+//	@Order(SecurityProperties.BASIC_AUTH_ORDER)
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 		http.authorizeHttpRequests(auth -> auth
 				.requestMatchers(
 						 "/CSS").permitAll()
-				.requestMatchers("/MenuAdmin").hasRole("ADMIN")
+				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.requestMatchers("/cliente/**").hasRole("CLIENTE")
 				.requestMatchers("/personal/**").hasAnyRole("ADMIN", "PERSONAL")
 				.anyRequest().authenticated())
@@ -35,15 +35,16 @@ public class SecurityConfig {
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/invitado")
 						.invalidateHttpSession(true).deleteCookies("JSESSIONID").permitAll())
 				.sessionManagement(session -> session.maximumSessions(1).expiredUrl("/invitado"))
-				.exceptionHandling(
-						exception -> exception.accessDeniedHandler((request, response, accessDeniedException) -> {
-							request.getSession().setAttribute("prevPage", request.getHeader("Referer"));
-							request.getSession().setAttribute("rol",
-									request.isUserInRole("ADMIN") ? "ADMIN"
-											: request.isUserInRole("PERSONAL") ? "PERSONAL"
-													: request.isUserInRole("CLIENTE") ? "CLIENTE" : "INVITADO");
-							response.sendRedirect("/public/acceso_perfiles");
-						}));
+//				.exceptionHandling(
+//						exception -> exception.accessDeniedHandler((request, response, accessDeniedException) -> {
+//							request.getSession().setAttribute("prevPage", request.getHeader("Referer"));
+//							request.getSession().setAttribute("rol",
+//									request.isUserInRole("ADMIN") ? "ADMIN"
+//											: request.isUserInRole("PERSONAL") ? "PERSONAL"
+//													: request.isUserInRole("CLIENTE") ? "CLIENTE" : "INVITADO");
+//							response.sendRedirect("/public/acceso_perfiles");
+//						}))
+				;
 		return http.build();
 	}
 
